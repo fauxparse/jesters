@@ -18,6 +18,8 @@
   <link rel="alternate" type="application/rss+xml" title="<?php bloginfo('name'); ?> RSS Feed" href="<?php bloginfo('rss2_url'); ?>" />
   <link rel="alternate" type="application/atom+xml" title="<?php bloginfo('name'); ?> Atom Feed" href="<?php bloginfo('atom_url'); ?>" />
   <link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
+  <script type="text/javascript" src="/theme/jquery.js"></script>
+  <script type="text/javascript" src="/theme/jquery-ui.js"></script>
   <?php if ( is_singular() ) wp_enqueue_script( 'comment-reply' ); ?>
   <?php wp_head(); ?>
 </head>

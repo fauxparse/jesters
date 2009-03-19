@@ -10,12 +10,15 @@
 
 <div id="home">
   <div id="header">
+    <a id="logo" href="/">The Court Jesters</a>
+    <blockquote>
+      <p>“One of the <strong>best</strong> improv troupes I’ve come across!”</p>
+      <cite>Nancy Cartwright (The Simpsons)</cite>
+    </blockquote>
   </div>
 
   <div id="navigator" class="span-24">
-    <div id="main-photo" class="span-8">
-      &nbsp;
-    </div>
+    <div id="main-photo" class="span-8">&nbsp;</div>
     <div id="tabs" class="span-16 last">
       <ul>
         <li class="active">
@@ -49,9 +52,9 @@
         <li>
           <a class="primary-link" href="/events">Your next event</a>
           <ul class="secondary-links">
-            <li><a href="/events/blah">Blah blah</a></li>
-            <li><a href="/events/blah">Blah blah</a></li>
-            <li><a href="/events/blah">Blah blah</a></li>
+            <li><a href="/events/packages">Packages</a></li>
+            <li><a href="/events/entertainment">Characters</a></li>
+            <li><a href="/events/mc">MCs</a></li>
           </ul>
           <div class="details">
             <div class="teaser" style="display: none">
@@ -63,9 +66,9 @@
         <li>
           <a class="primary-link" href="/events">Training</a>
           <ul class="secondary-links">
-            <li><a href="/training/blah">Blah blah</a></li>
-            <li><a href="/training/blah">Blah blah</a></li>
-            <li><a href="/training/blah">Blah blah</a></li>
+            <li><a href="/training/corporate">Corporate training</a></li>
+            <li><a href="/training/workshops">Workshops</a></li>
+            <li><a href="/training/schools">Theatre Sports in schools</a></li>
           </ul>
           <div class="details">
             <div class="teaser" style="display: none">
@@ -77,9 +80,9 @@
         <li>
           <a class="primary-link" href="/contact">Get in touch</a>
           <ul class="secondary-links">
-            <li><a href="/contact/blah">Blah blah</a></li>
-            <li><a href="/contact/blah">Blah blah</a></li>
-            <li><a href="/contact/blah">Blah blah</a></li>
+            <li><a href="/contact">Contact details</a></li>
+            <li><a href="http://www.facebook.com/group.php?gid=6407919733" target="_blank">Join us on Facebook</a></li>
+            <li><a href="http://twitter.com/courtjesters" target="_blank">Follow us on Twitter</a></li>
           </ul>
           <div class="details">
             <div class="teaser" style="display: none">
@@ -91,6 +94,28 @@
       </ul>
     </div>
   </div>
+
+  <div id="whats-on" class="span-24">
+    <div class="span-8">
+      <h2>What's on?</h2>
+    </div>
+    <div class="span-16">
+      
+    </div>
+  </div>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#navigator .primary-link').click(function() {
+      var section = $(this).closest('li').not('.active');
+      if (section.length > 0) {
+        section.addClass('active').find('.teaser').show('blind');
+        section.siblings('.active').removeClass('active').find('.teaser').hide('blind');
+      }
+      return false;
+    });
+  });
+</script>
 
 <?php get_footer(); ?>
