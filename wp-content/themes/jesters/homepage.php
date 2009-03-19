@@ -40,7 +40,7 @@
 						}
 						echo "><p>";
 						echo get_post_meta($page->ID, 'summary', true);
-						echo "<a class=\"more\" href=\"/{$page->post_name}\">Read more »</a></p></div></div></li>";
+						echo " <a class=\"more\" href=\"/{$page->post_name}\">Read more »</a></p></div></div></li>";
 						$i++;
 					}
 				}
