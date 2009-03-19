@@ -39,15 +39,18 @@ body {
 #home #navigator ul li {
   display: block;
   list-style: none;
-  margin: 0px 0px 0px -8px;
+  margin: 0px -8px 0px -8px;
   padding: 4px 8px;
   background: white;
   position: relative;
+  border-right: 8px solid white;
 }
 
 #home #navigator ul li li {
   background: none;
   padding: 0px;
+  margin: 0px;
+  border: none;
 }
 
 #home #navigator ul li.active {
@@ -78,7 +81,7 @@ body {
   float: left;
   line-height: 1.0;
   font-size: 85%;
-  padding: 0.5ex 0px 0.5ex 16px;
+  padding: 0.5ex 0px 0.5ex 12px;
   margin-left: 16px;
   border-left: 1px solid white;
   display: none;
