@@ -178,6 +178,7 @@ a:hover {
   color: white;
   position: relative;
   width: 616px;
+  line-height: 1.5;
 }
 
 #home #navigator .more {
