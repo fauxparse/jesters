@@ -11,10 +11,7 @@
 <div id="home">
   <div id="header">
     <a id="logo" href="/">The Court Jesters</a>
-    <blockquote>
-      <p>“One of the <strong>best</strong> improv troupes I’ve come across!”</p>
-      <cite>Nancy Cartwright (The Simpsons)</cite>
-    </blockquote>
+    <?php if (function_exists('stray_random_quote')) stray_random_quote('testimonials', false, '', false, 1, 0, 'quoteID', 'ASC'); ?>
   </div>
 
   <div id="navigator" class="span-24">

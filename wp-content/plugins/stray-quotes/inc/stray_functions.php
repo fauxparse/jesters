@@ -1,0 +1,559 @@
+<?php
+
+//MAIN FUNCTION. this RETURNS one or more random quotes.
+function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$multi=NULL,$timer=NULL,$noajax=NULL,$myoffset=0,$widgetid=NULL,$fullpage=NULL,$orderby='quoteID',$sort='ASC',$thisid=NULL) {
+
+	global $wpdb;
+
+	//the variables
+	$quotesoptions = array();
+	$quotesoptions = get_option('stray_quotes_options');
+	$beforeAll =  utf8_decode($quotesoptions['stray_quotes_before_all']);
+	$afterAll = utf8_decode($quotesoptions['stray_quotes_after_all']);
+	$beforeloader = utf8_decode($quotesoptions['stray_before_loader']);
+	$quoteloader = utf8_decode($quotesoptions['stray_loader']);
+	$afterloader = utf8_decode($quotesoptions['stray_after_loader']);
+	$strayajax = $quotesoptions['stray_ajax'];
+	$loading =  utf8_decode($quotesoptions['stray_loading']);
+
+	//handle the categories
+	if ( $categories && ($categories !='' && $categories !='all') ) {
+	
+		if (is_string($categories))$categories = explode(",", $categories);
+		
+		if (count($categories) == 1) {
+			$categoryquery = ' AND `category`=\''. $categories[0] .'\'';
+		} else { 
+			$categoryquery = ' AND `category`=\'';
+		
+			foreach ($categories as $category) {
+				$category = trim($category);
+				$categoryquery .= $category.'\' OR `category`=\'';
+			}
+			$categoryquery = substr($categoryquery,0,-17);
+			$categoryquery .='\'';
+		}
+	} else {
+		$categoryquery = '';
+		$categories = '';
+	}			
+
+	//generate a casual id if the function is not called via a widget
+	if (is_string($widgetid)) settype($widgetid, "integer"); 
+	if (!$widgetid)$widgetid = mt_rand(0,999999);
+	
+	//make sure it is not a string
+	if(is_string($multi)) settype($multi, "integer"); 
+	if($multi == 0 || $multi == '' || false === $multi)$multi = 1;
+	if(is_string($timer)) settype($timer, "integer");
+	if($timer == '' || false === $timer)$timer = 0;
+	if($orderby=='')$orderby='quoteID';
+	if($sort=='')$sort='ASC';
+		
+	//sql for more than one quote
+	if ($multi > 1){
+		
+		// how many rows we have in database?
+		$numrows = $wpdb->get_var("SELECT COUNT(`quoteID`) as 'rows' FROM " . WP_STRAY_QUOTES_TABLE . " WHERE visible='yes'" . $categoryquery);
+		
+		// workaround for the "division by zero" problem
+		$rows = $multi;
+		if (is_string($rows))$rows=intval($rows);
+		settype($rows, "integer"); 
+
+		if ($fullpage){
+		
+			//what page number?
+			$pages = 1;
+			if(isset($_GET['qp']))$pages = $_GET['qp'];
+			if ($strayajax != 'Y' && $noajax != true)$offset=$myoffset;
+			else $offset = ($pages - 1) * $rows;		
+			
+			// how many pages we have when using paging?
+			if ($rows == NULL) $rows = 2; 
+			$maxPage = ceil($numrows/intval($rows));
+			
+			// print the link to access each page
+			$nav  = '';		
+			$baseurl = remove_querystring_var($_SERVER['REQUEST_URI'], 'qp');
+			if (strpos( $baseurl,'?'))$urlpages = $baseurl.'&qp=';
+			else $urlpages = $baseurl.'?qp=';
+			
+			for($quotepage = 1; $quotepage <= $maxPage; $quotepage++) {
+			   if ($quotepage == $pages)$nav .= $quotepage; // no need to create a link to current page
+			   else $nav .= ' <a href="'.$urlpages.$quotepage.'">'.$quotepage.'</a> ';
+			}
+			
+			if ($pages > 1) {
+			   $quotepage  = $pages - 1;
+			   $prev  = ' <a href="'.$urlpages.$quotepage.'">Previous '.$rows.'</a> | ';		
+			   $first = ' <a href="'.$urlpages.'1">First</a> | ';
+			}
+			else {
+			   $prev  = '&nbsp;'; // we're on page one, don't print previous link
+			   $first = '&nbsp;'; // nor the first page link
+			}
+			
+			if ($pages < $maxPage) {
+			
+				$missing = $numrows-($rows*$pages);		
+				if ($missing > $rows) $missing = $rows;
+				
+				$quotepage = $pages + 1;
+				$next = ' | <a href="'.$urlpages.$quotepage.'"> Next '.$missing.'</a> ';
+				
+				$last = ' | <a href="'.$urlpages.$maxPage.'"> Last</a> ';
+			}
+			else {
+			   $next = '&nbsp;'; // we're on the last page, don't print next link
+			   $last = '&nbsp;'; // nor the last page link
+			}		
+			
+			$loader = $first . $prev . $nav . $next . $last;
+			
+		} else {
+			
+			//what page number?
+			$pages = 1;
+			if(isset($_GET['qmp']))$pages = $_GET['qmp'];
+			if ($strayajax != 'Y' && $noajax != true)$offset=$myoffset;
+			else $offset = ($pages - 1) * $rows;
+			
+			// how many pages we have when using paging?
+			if ($rows == NULL) $rows = 2; 
+			$maxPage = ceil($numrows/intval($rows));
+			
+			$baseurl = remove_querystring_var($_SERVER['REQUEST_URI'], 'qmp');
+			if (strpos( $baseurl,'?'))$urlpages = $baseurl.'&qmp=';
+			else $urlpages = $baseurl.'?qmp=';		
+			
+			if ($pages > 1) {
+			   $quotepage  = $pages - 1;
+			   $prev  = '<a href="'.$urlpages.$quotepage.'">&laquo; Previous '.$rows.'</a>&nbsp;|';		
+			}
+			else {
+			   $prev  = '&nbsp;'; // we're on page one, don't print previous link
+			}
+			
+			if ($pages < $maxPage) {
+			
+				$missing = $numrows-($rows*$pages);		
+				if ($missing > $rows) $missing = $rows;
+				
+				$quotepage = $pages + 1;
+				$next = '&nbsp;<a href="'.$urlpages.$quotepage.'">Next '.$missing.' &raquo;</a>';
+				
+			}
+			else {
+			   $next = '&nbsp;'; // we're on the last page, don't print next link
+			}
+			
+			$loader = $prev.$next;
+			
+		}
+		
+		//if random
+		if (!$sequence) { 
+			$orderby ='RAND()';
+			$sort = '';
+		} else {
+			$orderby ="`".$orderby."` ";
+		}
+		
+		//retrieve the quotes
+		$sql = "SELECT `quoteID`,`quote`,`author`,`source`,`category` FROM `" 
+		. WP_STRAY_QUOTES_TABLE . "` WHERE visible='yes'" . $categoryquery 
+		. " ORDER BY ". $orderby . $sort 
+		. " LIMIT " . $offset. ", ". $multi;
+		$offset = $myoffset+$multi;
+		
+		$sql2 = "SELECT COUNT(`quoteID`) AS 'rows' FROM `" . WP_STRAY_QUOTES_TABLE . "` WHERE visible='yes'" . $categoryquery;
+		$totalquotes = $wpdb->get_var($sql2);
+		$result = $wpdb->get_results($sql);
+	
+	} 
+	
+	//sql for one quote only
+	else {		
+		
+		//if not a specific quote
+		if ( !$thisid || $thisid == false || $thisid == '' ){
+			
+			//sql the quotes
+			$offset=0;		
+			$sql = "SELECT `quoteID`,`quote`,`author`,`source`,`category` FROM `" 
+			. WP_STRAY_QUOTES_TABLE . "` WHERE visible='yes'" .$categoryquery
+			. " ORDER BY ". "`".$orderby."` " . $sort ;
+
+			$result = $wpdb->get_results($sql);
+			$totalquotes = count($result);
+			
+			//check and make the random/not random thing
+			if ($sequence) {
+				
+				//if $sequence=true, make it a random number
+				if ($sequence == 'true' || $sequence === true)$sequence = mt_rand(0, ($totalquotes-1));
+				
+				else {
+					
+					//make sure it is not some other string
+					if (is_string($sequence)) settype($sequence, "integer"); 		
+					
+					//if it is a number
+					if (is_int($sequence)) {
+						//start over when the last one is reached
+						if ($sequence == ($totalquotes-1))$sequence = -1;
+						//grow the sequence
+						$sequence = $sequence+1;
+					}
+					
+				}
+				
+			}
+		
+		} 
+		
+		//if it is a specific quote
+		else {
+			
+			$sql = "SELECT `quoteID`,`quote`,`author`,`source`,`category` FROM `" 
+			. WP_STRAY_QUOTES_TABLE 
+			. "` WHERE `quoteID`='"
+			. $thisid."'";
+
+			$result = $wpdb->get_row($sql);
+		}
+		
+	}
+	
+	//if the sql has something to say, build the output
+	if ( !empty($result) ){	
+	
+		$output = '';
+			
+		//if ajax loader is NOT disabled
+		if ($strayajax != 'Y' && $noajax != true ) {
+			
+			//make sure to reset offset when there are no more quotes
+			if ($multi > 1)if($offset >= $numrows) $offset = 0;
+			
+			//make things into a string (for javascript)
+			if(is_array($categories))$categories = implode(',', $categories);
+			settype($multi,"string");
+			settype($offset,"string");
+			settype($timer,"string");
+			settype($widgetid,"string");
+			settype($sequence,"string"); //this otherwise "0" would be considered as "false", long story
+		
+			//override default new quote loader
+			if ($linkphrase)$quoteloader = $linkphrase;
+					
+			//the javascript event with all the variables
+			$jaction = 'newQuote(\''.
+			$categories .'\',\''.
+			urlencode($quoteloader).'\',\''.
+			$widgetid.'\',\''.
+			WP_STRAY_QUOTES_PATH.'\',\''.
+			$multi.'\',\''.
+			$offset.'\',\''.
+			$sequence.'\',\''.
+			$timer.'\',\''.
+			$loading.'\')';
+			
+			$event = 'onclick="'.$jaction.'"';
+			
+			//click on the quote itself or on the link (part 1)
+			if (!$quoteloader && $timer < 2) $output .= '<div class="stray_quote-'.$widgetid.'" '.$event.' >';
+			else  $output .= '<div class="stray_quote-'.$widgetid.'">';
+		}
+		
+		//output if multi quote
+		if ($multi > 1){
+			
+			$output .= $beforeAll.'<ul>';
+			foreach ( $result as $get_one )
+				$output .= '<li>'.stray_output_one($get_one,$multi).'</li>';	
+			$output .= '</ul>'.$afterAll;
+			
+		} 
+		
+		//output if one quote only
+		else {
+			
+			//if not a specific quote
+			if ( !$thisid || $thisid == false || $thisid == '' ){
+				
+				//get the next quote in sequence
+				if ($sequence)$get_one = $result[$sequence];	
+				//get the quote randomly
+				else $get_one = $result[mt_rand(0, ($totalquotes-1))];
+				$output .= stray_output_one($get_one,$multi);
+			
+			} 
+			
+			//if it is a specific quote
+			else $output .= stray_output_one($result,$multi);
+		}
+
+		//if ajax loader is NOT disabled
+		if ($strayajax != 'Y' && $noajax != true ) {
+				
+			//if you click on the link (part 2)
+			if ($quoteloader && $timer < 2) {
+				
+				$output .= $beforeloader;
+				$output .= '<a '.$event.' style="cursor:pointer" >'. $quoteloader.'</a>';
+				$output .= $afterloader;
+			}
+			
+			$output .= '</div>';	
+			
+			//timeout thing
+			if ($timer)$output .= '<script type="text/javascript">setTimeout("'.$jaction.'", "'.$timer.'000");</script>';
+			
+		} 
+		
+		//AJAX disabled AND many quotes (output the pagination)
+		else if ($multi > 1) {
+			
+			$output .= $beforeloader;
+			$output .= $loader;
+			$output .= $afterloader;			
+		}
+		
+		return $output;
+	}
+}
+
+//this is a TEMPLATE TAG. It ECHOES one or more random quotes.
+function stray_random_quote($categories='all',$sequence=false,$linkphrase='',$noajax=false,$multi=1,$timer=0,$orderby='quoteID',$sort='ASC') {
+	echo get_stray_quotes($categories,$sequence,$linkphrase,$multi,$timer,$noajax,0,'',false,$orderby,$sort,'');	
+}
+
+//this is a TEMPLATE TAG. It ECHOES a specific quote.
+function stray_a_quote($id=1,$linkphrase='',$noajax=false) {
+	echo get_stray_quotes('',true,$linkphrase,'','',$noajax,'','','','','',$id);
+}
+
+//this is a SHORTCODE [random-quote]
+function stray_rnd_shortcut($atts, $content=NULL) {
+	
+	extract(shortcode_atts(array(
+	"categories" => 'all',
+	"sequence" => false,
+	"linkphrase" => '',
+	"widgetid" => '', 
+	"noajax" => '',
+	"multi" => 1,
+	"timer" => '',
+	"offset" => 0,
+	"fullpage" => '',
+	), $atts));	
+	
+	return get_stray_quotes($categories,$sequence,$linkphrase,$multi,$timer,$noajax,$offset,$widgetid,$fullpage,'quoteID','ASC','');
+}
+
+//this is a SHORTCODE [all-quotes]
+function stray_page_shortcut($atts, $content=NULL) {
+
+	extract(shortcode_atts(array(
+	"categories" => 'all',
+	"sequence" => true,
+	"linkphrase" => '',
+	"widgetid" => '', 
+	"noajax" => true,
+	"rows" => 10,
+	"timer" => '',
+	"offset" => 0,
+	"fullpage" => true,
+	"orderby" =>'quoteID',
+	"sort" => 'ASC'
+	), $atts));	
+	
+	return get_stray_quotes($categories,$sequence,$linkphrase,$rows,$timer,$noajax,$offset,$widgetid,$fullpage,$orderby,$sort,'');
+}
+
+//this is a SHORTCODE [quote id=X]
+function stray_id_shortcut($atts, $content=NULL) {
+
+	extract(shortcode_atts(array(
+	"id" => '1',
+	"linkphrase" => '',
+	"noajax" => true
+	), $atts));	
+	
+	return get_stray_quotes('',true,$linkphrase,'','',$noajax,'','','','','',$id);
+
+}
+
+//this FORMATS a given quote according to the settings
+function stray_output_one($get_one,$multi=NULL) {
+
+	//the variables
+	$quotesoptions = array();
+	$quotesoptions = get_option('stray_quotes_options');
+	if($multi == 1 || $multi == '' || $multi==false){
+		$beforeAll =  utf8_decode($quotesoptions['stray_quotes_before_all']);
+		$afterAll = utf8_decode($quotesoptions['stray_quotes_after_all']);
+	} else {
+		$beforeAll = '';
+		$afterAll = '';
+	}
+	$beforeQuote = utf8_decode($quotesoptions['stray_quotes_before_quote']);
+	$afterQuote = utf8_decode($quotesoptions['stray_quotes_after_quote']);
+	$beforeAuthor = utf8_decode($quotesoptions['stray_quotes_before_author']);
+	$afterAuthor = utf8_decode($quotesoptions['stray_quotes_after_author']);
+	$beforeSource = utf8_decode($quotesoptions['stray_quotes_before_source']);
+	$afterSource = utf8_decode($quotesoptions['stray_quotes_after_source']);
+	$putQuotesFirst = utf8_decode($quotesoptions['stray_quotes_put_quotes_first']);
+	$defaultVisible = utf8_decode($quotesoptions['stray_quotes_default_visible']);
+	$linkto = utf8_decode($quotesoptions['stray_quotes_linkto']);
+	$sourcelinkto = utf8_decode($quotesoptions['stray_quotes_sourcelinkto']);
+	$sourcespaces = utf8_decode($quotesoptions['stray_quotes_sourcespaces']);	
+	$authorspaces = utf8_decode($quotesoptions['stray_quotes_authorspaces']);
+	$ifnoauthor = utf8_decode($quotesoptions['stray_if_no_author']);	
+	
+	$output = '';	
+		
+	//make or not the author link
+	if ( $get_one->author ) {
+		if (!$linkto || strpos('<a href=',$get_one->author))$Author = $get_one->author;
+		else {
+			$Author = $get_one->author;
+			if ($authorspaces)$Author =str_replace(" ",$authorspaces,$Author);
+			
+			$search = array('"', '&', '%AUTHOR%');
+			$replace = array('%22','%26', $Author);
+			$linkto = str_replace($search,$replace,$linkto);
+			$Author = '<a href="'.htmlentities($linkto).'">' . $get_one->author . '</a>';
+		}
+	}
+	
+	//make or not the source link
+	if ( $get_one->source ) {
+		if (!$sourcelinkto || strpos('<a href=',$get_one->source))$Source = $get_one->source;
+		else {
+			$Source = $get_one->source;
+			if ($sourcespaces)$Source =str_replace(" ",$sourcespaces,$Source);
+			
+			$search = array('"', '&', '%SOURCE%');
+			$replace = array('%22','%26', $Source);
+			$sourcelinkto = str_replace($search,$replace,$sourcelinkto);
+			$Source = '<a href="'.htmlentities($sourcelinkto).'">' . $get_one->source . '</a>';
+		}
+	}
+	
+	//author first
+	if ( !$putQuotesFirst) {
+		$output .= $beforeAll;
+		
+		//if author
+		if ( !empty($get_one->author) ) {
+			$output .= $beforeAuthor . $Author . $afterAuthor;
+			//source values if there is an author
+			if ( !empty($get_one->source) ) {
+				$output .= $beforeSource . $Source . $afterSource;
+			}				
+		//source values if there is no author	
+		} else {
+			if ( !empty($get_one->source) ) {
+				$output .= $ifnoauthor . $Source . $afterSource;
+			}				
+		}
+
+		$output .= $beforeQuote . nl2br($get_one->quote) . $afterQuote;			
+		$output .= $afterAll;		
+	}
+	
+	//quote first
+	else {	
+		
+		$output .= $beforeAll;		
+		$output .= $beforeQuote . nl2br($get_one->quote) . $afterQuote;
+		//if author
+		if ( !empty($get_one->author) ) {
+			$output .= $beforeAuthor . $Author . $afterAuthor;
+			//source values if there is an author
+			if ( !empty($get_one->source) ) {
+				$output .= $beforeSource . $Source . $afterSource;
+			}				
+		//source values if there is no author	
+		} else {
+			if ( !empty($get_one->source) ) {
+				$output .= $ifnoauthor . $Source . $afterSource;
+			}				
+		}
+		$output .= $afterAll;		
+	}		
+	
+	//end of story
+	return $output;
+
+}
+
+//this creates a LIST of unique CATEGORIES
+function make_categories() {
+	global $wpdb;
+	$allcategories = $wpdb->get_col("SELECT `category` FROM " . WP_STRAY_QUOTES_TABLE);
+	$uniquecategories = array_unique($allcategories);
+	return $uniquecategories;
+}
+
+//this finds the MOST USED VALUE in a column
+function mostused($field) {
+
+	global $wpdb;
+
+	$sql = 'SELECT `'.$field.'` FROM ' . WP_STRAY_QUOTES_TABLE . ' WHERE `'.$field.'` IS NOT NULL AND `'.$field.'` !=""' ;
+	$all = $wpdb->get_col($sql);
+	$array = array_count_values($all);
+	
+	reset($array);
+	if(FALSE === key($array)) {
+		return array('min' => NULL, 'max' => NULL);
+	}
+	
+	$min = $max = current($array);
+	$val = next($array);
+	$atleastthree = false;
+	
+	while(NULL !== key($array)) {
+		if($val > $max)$max = $val;
+		elseif($val < $min)$min = $val;
+		if ($val > 3) $atleastthree = true;
+		$val = next($array);
+		
+	}
+	if ($atleastthree == true) {
+		$keys = array_keys($array, $max);
+		$maxvalue = $keys[0];
+		return $maxvalue;	
+	} else return false;
+}
+
+//this adds or REPLACES A VARIABLE into a querystring. 
+//Thanks to http://www.addedbytes.com/php/querystring-functions/
+function querystrings($url, $key, $value) {
+	$url = preg_replace('/(.*)(\?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
+	$url = substr($url, 0, -1);
+	if (strpos($url, '?') === false) {
+		return ($url . '?' . $key . '=' . $value);
+	} else {
+		return ($url . '&' . $key . '=' . $value);
+	}
+}
+
+//this REMOVES A VARIABLE from a querystring. 
+//Thanks to http://www.addedbytes.com/php/querystring-functions/
+function remove_querystring_var($url, $key) {
+	$url = preg_replace('/(.*)(\?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&');
+	$url = substr($url, 0, -1);
+	return ($url);
+}
+
+//this is for compatibility with old function names
+function wp_quotes_random() {return stray_random_quote();}
+function wp_quotes($id) {return stray_a_quote($id);}
+function wp_quotes_page($data) {return stray_page_shortcut();}
+
+?>
