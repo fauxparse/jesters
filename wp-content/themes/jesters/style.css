@@ -82,15 +82,12 @@ a:hover {
 
 #home #navigator {
   background: #ed1c24 url(images/home-splash.png) no-repeat 0px 100%;
-  height: 21.7em;
-  overflow: hidden;
   margin-bottom: 16px;
 }
 
 #home #navigator ul {
   margin: 0px 0px 0px -8px;
   padding: 0px;
-  border-bottom: 2em solid white;
 }
 
 #home #navigator ul li {
@@ -168,9 +165,11 @@ a:hover {
 
 #home #navigator .more {
   color: #f68e92;
-  position: absolute;
+/*  position: absolute;
   right: 8px;
   bottom: 4px;
+*/
+  float: right;
 }
 
 #home #navigator .active a:hover {
