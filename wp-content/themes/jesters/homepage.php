@@ -64,8 +64,9 @@
     $('#navigator .primary-link').click(function() {
       var section = $(this).closest('li').not('.active');
       if (section.length > 0) {
-        section.addClass('active').find('.teaser').show('blind');
-        section.siblings('.active').removeClass('active').find('.teaser').hide('blind');
+				var old_section = section.siblings('.active').removeClass('active');
+        section.addClass('active').find('.teaser').show('blind', 'fast', function() { old_section.find('.teaser').hide('blind'); });
+        //section.siblings('.active').removeClass('active').find('.teaser').hide('blind');
       }
       return false;
     });

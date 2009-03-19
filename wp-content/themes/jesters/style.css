@@ -165,11 +165,12 @@ a:hover {
 
 #home #navigator .more {
   color: #f68e92;
-/*  position: absolute;
-  right: 8px;
-  bottom: 4px;
-*/
   float: right;
+  display: none;
+}
+
+#home #navigator .active .more {
+  display: inline;
 }
 
 #home #navigator .active a:hover {
