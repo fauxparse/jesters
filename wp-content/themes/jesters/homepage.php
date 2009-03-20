@@ -51,7 +51,7 @@
 
   <div id="whats-on" class="span-24">
     <div class="span-8">
-      <h2>What's on?</h2>
+      <h2>What’s on?</h2>
     </div>
     <div class="span-16">
       
