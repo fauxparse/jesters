@@ -24,6 +24,21 @@ a:hover {
   border-bottom-color: #ed1c24;
 }
 
+p {
+  margin: 0px 0px 2ex;
+  padding: 0px;
+}
+
+h2 {
+  margin: 0px 0px 0.5ex;
+  padding: 0px;
+  font-size: 250%;
+  font-weight: bold;
+  color: #666;
+  text-transform: lowercase;
+  letter-spacing: -0.1em;
+}
+
 /*.container { background: url(/theme/blueprint/blueprint.png); }*/
 
 /* Homepage {{{ */
@@ -56,6 +71,7 @@ a:hover {
   position: absolute;
   right: 8px;
   bottom: 8px;
+  width: 600px;
 }
 
 #home #navigator {
@@ -324,7 +340,7 @@ a:hover {
 }
 
 #sidebar-inner {
-  padding: 0px 16px 8px 8px;
+  padding: 8px 16px 8px 8px;
 }
 
 /* }}} */
@@ -341,9 +357,9 @@ blockquote.testimonial {
 }
 
 blockquote.testimonial p {
-  font: 150% Baskerville, Georgia, serif;
+  font: 125% Baskerville, Georgia, serif;
   font-style: italic;
-  margin: 0px;
+  margin: 0px 0px 0.5ex;
 }
 
 blockquote.testimonial strong {
@@ -366,6 +382,24 @@ blockquote.testimonial a {
   color: #ed1c24;
   text-decoration: underline;
 }
+
+#testimonials ul {
+  margin: 0px;
+  padding: 1ex 0px 0px;
+}
+
+#testimonials ul li {
+  display: block;
+  list-style: none;
+  margin: 0px 0px 2ex;
+  padding: 0px;
+}
+
+#testimonials blockquote.testimonial {
+  text-align: left;
+}
+
+#testimonials blockquote.testimonial a.more { display: none; }
 
 /* }}} */
 

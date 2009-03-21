@@ -316,9 +316,9 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 		//AJAX disabled AND many quotes (output the pagination)
 		else if ($multi > 1) {
 			
-			$output .= $beforeloader;
-			$output .= $loader;
-			$output .= $afterloader;			
+			//$output .= $beforeloader;
+			//$output .= $loader;
+			//$output .= $afterloader;			
 		}
 		
 		return $output;
