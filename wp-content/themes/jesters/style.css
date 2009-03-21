@@ -409,11 +409,11 @@ blockquote.testimonial a {
   background: white;
   font-size: 85%;
   color: #999;
-  padding-top: 0.5em;
+  padding-top: 4ex;
+  padding-bottom: 6ex;
 }
 
 #footer-right {
-  text-align: right;
 }
 
 /* }}} */

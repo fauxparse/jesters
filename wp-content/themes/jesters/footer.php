@@ -6,10 +6,10 @@
 ?>
 
     <div id="footer" class="span-24">
-      <div id="footer-left" class="span-12">
+      <div id="footer-left" class="span-8">
         &nbsp;
       </div>
-      <div id="footer-right" class="span-12 last">
+      <div id="footer-right" class="span-16 last">
         &copy; 2009 The Court Jesters. Web design and development by <a href="http://robo.tk">robo.tk</a>.
       </div>
     </div>
