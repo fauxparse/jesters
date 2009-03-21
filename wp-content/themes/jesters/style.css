@@ -24,7 +24,7 @@ a:hover {
   border-bottom-color: #ed1c24;
 }
 
-.container { background: url(/theme/blueprint/blueprint.png); }
+/*.container { background: url(/theme/blueprint/blueprint.png); }*/
 
 /* Homepage {{{ */
 
@@ -178,7 +178,6 @@ a:hover {
 #home #whats-on {
   background: #333;
   color: white;
-  margin-bottom: 16px;
 }
 
 #home #whats-on h2 {
@@ -348,6 +347,7 @@ blockquote.testimonial a {
 #footer {
   font-size: 85%;
   color: #999;
+  padding-top: 0.5em;
 }
 
 #footer-right {
