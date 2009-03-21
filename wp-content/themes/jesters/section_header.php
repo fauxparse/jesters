@@ -26,9 +26,9 @@
     <ul>
       <li class="first"><?php echo "<a href=\"/{$root->post_name}\">{$root->post_title}</a>" ?></li>
       <?php wp_list_pages("title_li=&child_of={$root->ID}&depth=1"); ?>
+      <?php echo get_post_meta($root->ID, 'extra_links', true); ?>
     </ul>
   </div>
-  <?php  ?>
   <h1><?php the_title_attribute(); ?>
 </div>
 
