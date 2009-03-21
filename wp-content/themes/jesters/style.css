@@ -13,6 +13,10 @@ body {
   color: #333;
 }
 
+body, td, input, textarea, select {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
 a {
   color: #ed1c24;
   text-decoration: none;
@@ -468,3 +472,94 @@ blockquote.testimonial a {
 
 /* }}} */
 
+/* Contact Form {{{ */
+
+.form {
+  background: #ccc;
+  padding: 16px 0px;
+  margin: 0px;
+}
+
+.form .field {
+  padding: 0px 0px 1ex;
+}
+
+.form .buttons {
+  padding-bottom: 0px;
+}
+
+.form label {
+  margin-left: 16px;
+  text-transform: uppercase;
+  letter-spacing: -0.1em;
+  color: #999;
+}
+
+.form input.text,
+.form textarea {
+  margin-left: 16px;
+  font-size: 125%;
+  border: none;
+  background: #f2f2f2;
+  display: block;
+}
+
+.form input.text:focus,
+.form textarea:focus {
+  background: white;
+}
+
+.form .span-16 .text,
+.form .span-16 textarea {
+  width: 600px;
+}
+
+.form .span-8 .text {
+  width: 280px;
+}
+
+.form .button {
+  font-size: 200%;
+  color: white;
+  background: #ed1c24;
+  border: none;
+  height: 1.8em;
+  line-height: 1.8em;
+  vertical-align: middle;
+  text-transform: lowercase;
+  letter-spacing: -0.1em;
+  font-weight: bold;
+  padding: 0px 1em;
+  display: block;
+  margin-left: 16px;
+}
+
+.form .field,
+.form .buttons {
+  position: relative;
+}
+
+.form .field br {
+  display: none;
+}
+
+.form .buttons img {
+  position: absolute;
+  right: 16px;
+  bottom: 0px;
+}
+
+#main .wpcf7-form-control-wrap {
+  position: static !important;
+}
+
+#main .wpcf7-not-valid-tip {
+  background: #ffffcc !important;
+  border: none !important;
+  position: absolute !important;
+  right: 16px !important;
+  left: auto !important;
+  top: -4px !important;
+}
+
+/* }}} */
