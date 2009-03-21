@@ -43,11 +43,14 @@
         <?php  ?>
         <h1><?php the_title_attribute(); ?>
       </div>
-      <div id="sub-header" class="span-24">
-        <div id="testimonial" class="span-8">
+      
+      <div id="sidebar" class="span-8">
+        <div id="sidebar-inner">
           <?php if (function_exists('stray_random_quote')) stray_random_quote('testimonials', false, '', false, 1, 0, 'quoteID', 'ASC'); ?>
         </div>
-        <div id="intro" class="span-16 last">
+      </div>
+      <div id="main" class="span-16 last">
+        <div id="main-inner">
           <?php
             if ($subsection) {
               $tertiary_post_list = wp_list_pages("title_li=&child_of={$subsection->ID}&depth=1&echo=0");
@@ -56,12 +59,9 @@
               }
             }
           ?>
+          <?php the_content(); ?>
         </div>
       </div>
-      
-      <!-- Start content -->
-      <?php the_content(); ?>
-      <!-- End content -->
     </div>
 	<?php endwhile; ?>
 <?php else : ?>

@@ -31,6 +31,7 @@
 						}
 						echo "><a class=\"primary-link\" href=\"/{$page->post_name}\">{$page->post_title}</a><ul class=\"secondary-links\">";
             wp_list_pages("title_li=&child_of={$page->ID}&depth=1");
+            echo get_post_meta($page->ID, 'extra_links', true);
 						echo "</ul><div class=\"details\"><div class=\"teaser\"";
 						if ($i > 0) {
 							echo " style=\"display: none;\"";
