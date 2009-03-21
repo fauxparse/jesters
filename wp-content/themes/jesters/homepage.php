@@ -15,7 +15,7 @@
   </div>
 
   <div id="navigator" class="span-24">
-    <div id="splash-photo" class="span-8"><img src="/theme/images/splash-events.png" />&nbsp;</div>
+    <div id="splash-photo" class="span-8"><div></div>&nbsp;</div>
     <div id="tabs" class="span-16 last">
       <ul>
 				<?php
@@ -67,10 +67,9 @@
       var section = $(this).closest('li').not('.active');
       if (section.length > 0) {
 				var old_section = section.siblings('.active').removeClass('active');
-				$('#splash-photo img').fadeOut('fast');
+				$('#splash-photo div').fadeOut('fast');
         section.addClass('active').find('.teaser').show('blind', 'fast', function() {
-          //$('#home #navigator').css('background-image', 'url(' + section.find('img').attr('src') + ')');
-          $('#splash-photo img').attr('src', section.find('img').attr('src')).fadeIn();
+          $('#splash-photo div').css('background-image', 'url(' + section.find('img').attr('src') + ')').fadeIn();
           old_section.find('.teaser').hide('blind');
         });
         //section.siblings('.active').removeClass('active').find('.teaser').hide('blind');
