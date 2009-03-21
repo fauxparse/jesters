@@ -2076,12 +2076,13 @@ function &get_pages($args = '') {
 		'sort_column' => 'post_title', 'hierarchical' => 1,
 		'exclude' => '', 'include' => '',
 		'meta_key' => '', 'meta_value' => '',
-		'authors' => '', 'parent' => -1, 'exclude_tree' => ''
+		'authors' => '', 'parent' => -1, 'exclude_tree' => '',
+		'limit' => ''
 	);
 
 	$r = wp_parse_args( $args, $defaults );
 	extract( $r, EXTR_SKIP );
-
+	
 	$key = md5( serialize( compact(array_keys($defaults)) ) );
 	if ( $cache = wp_cache_get( 'get_pages', 'posts' ) ) {
 		if ( isset( $cache[ $key ] ) ) {
@@ -2175,7 +2176,7 @@ function &get_pages($args = '') {
 	$query .= " ORDER BY " . $sort_column . " " . $sort_order ;
 
 	$pages = $wpdb->get_results($query);
-
+	
 	if ( empty($pages) ) {
 		$pages = apply_filters('get_pages', array(), $r);
 		return $pages;
@@ -2207,6 +2208,10 @@ function &get_pages($args = '') {
 	wp_cache_set( 'get_pages', $cache, 'posts' );
 
 	$pages = apply_filters('get_pages', $pages, $r);
+
+	if ($limit != '') {
+	  $pages = array_slice($pages, 0, intval($limit));
+	}
 
 	return $pages;
 }
