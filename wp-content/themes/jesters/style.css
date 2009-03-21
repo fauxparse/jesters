@@ -24,7 +24,7 @@ a:hover {
   border-bottom-color: #ed1c24;
 }
 
-/*.container { background: url(/theme/blueprint/blueprint.png); }*/
+.container { background: url(/theme/blueprint/blueprint.png); }
 
 /* Homepage {{{ */
 
@@ -35,12 +35,13 @@ a:hover {
 #home #header {
   height: 128px;
   position: relative;
+  background: none;
 }
 
-#home #logo {
+#header #logo {
   position: absolute;
   left: 0px;
-  bottom: -40px;
+  top: 16px;
   width: 208px;
   height: 144px;
   background: url(images/home-logo.png) no-repeat 0px 0px;
@@ -51,33 +52,14 @@ a:hover {
   border: none;
 }
 
-#home #header blockquote {
+#home #header #logo {
+  top: 24px;
+}
+
+#home #header blockquote.testimonial {
   position: absolute;
   right: 8px;
   bottom: 8px;
-  text-align: right;
-  color: #666;
-  margin: 0px;
-  padding: 0px;
-}
-
-#home #header blockquote p {
-  font: 150% Baskerville, Georgia, serif;
-  font-style: italic;
-  margin: 0px;
-}
-
-#home #header blockquote strong {
-  color: #333;
-  font-size: 125%;
-}
-
-#home #header blockquote cite {
-  font-size: 85%;
-  font-style: normal;
-  text-transform: uppercase;
-  letter-spacing: -0.1em;
-  color: #999;
 }
 
 #home #navigator {
@@ -207,6 +189,156 @@ a:hover {
   line-height: 0.6;
   text-indent: 8px;
   letter-spacing: -0.1em;
+}
+
+/* }}} */
+
+/* Section pages {{{ */
+
+#header {
+  position: relative;
+  background: #ed1c24 url(images/section-header.png) no-repeat 100% 0px;
+}
+
+.primary {
+  height: 120px;
+  margin-left: 312px;
+  position: relative;
+}
+
+.secondary {
+  height: 1.3em;
+  margin-top: 0.5em;
+  margin-left: 312px;
+}
+
+.navigation ul {
+  height: 2em;
+  margin: 0px;
+  padding: 0px;
+}
+
+.primary ul {
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+}
+
+.navigation li {
+  display: inline;
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+.navigation li a {
+  float: left;
+  line-height: 2em;
+  height: 2em;
+  vertical-align: middle;
+  color: #999;
+  border: none;
+  padding: 0px 8px;
+  text-transform: uppercase;
+  letter-spacing: -0.1em;
+}
+
+.navigation li a:hover { color: #ed1c24; }
+                    
+.navigation li.current_page_item a,
+.navigation li.current_page_ancestor a {
+  background: #ed1c24;
+  color: white;
+  font-weight: bold;
+}
+
+.secondary li a,
+.secondary li.current_page_ancestor a {
+  color: #f68e92;
+  border-left: 1px solid #f68e92;
+  height: 1.3em;
+  line-height: 1.3em;
+}
+
+.secondary li.first a { border: none; }
+.secondary li a:hover { color: white; }
+.secondary li.current_page_item a,
+.secondary li.current_page_parent a { color: white; background: none; }
+
+.tertiary {
+  height: 1.3em;
+  margin-top: 0.5em;
+}
+
+.tertiary li a {
+  height: 1.3em;
+  line-height: 1.3em;
+  border-left: 1px solid #999;
+}
+
+.tertiary li.first a { border: none; }
+.tertiary li.current_page_item a,
+.tertiary li.current_page_parent a { color: #ed1c24; background: none; }
+
+#header h1 {
+  padding: 0px 0px 8px 320px;
+  margin: 0px;
+  font-size: 300%;
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: -0.1em;
+}
+
+#sub-header {
+  background: #ccc;
+}
+
+#sub-header #testimonial {
+  margin: 8px 0px;
+  border-right: 1px solid #999;
+}
+
+#sub-header blockquote.testimonial {
+  padding: 0px 16px;
+}
+
+/* }}} */
+
+/* Testimonials {{{ */
+
+blockquote.testimonial {
+  text-align: right;
+  color: #666;
+  margin: 0px;
+  padding: 0px;
+}
+
+blockquote.testimonial p {
+  font: 150% Baskerville, Georgia, serif;
+  font-style: italic;
+  margin: 0px;
+}
+
+blockquote.testimonial strong {
+  color: #333;
+  font-size: 125%;
+}
+
+blockquote.testimonial cite,
+blockquote.testimonial a {
+  display: block;
+  font-size: 85%;
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: -0.1em;
+  color: #999;
+}
+
+blockquote.testimonial a {
+  border: none;
+  color: #ed1c24;
+  text-decoration: underline;
 }
 
 /* }}} */
