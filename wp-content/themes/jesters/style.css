@@ -75,9 +75,16 @@ h2 {
 }
 
 #home #navigator {
-  background: #ed1c24 url(images/home-splash.png) no-repeat 0px 100%;
+  background: #ed1c24;
   margin-bottom: 16px;
   line-height: normal;
+  position: relative;
+}
+
+#home #navigator #splash-photo img {
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
 }
 
 #home #navigator ul {
@@ -98,6 +105,13 @@ h2 {
   border-right: 8px solid white;
 }
 
+#home #navigator ul li img {
+  visibility: hidden;
+  position: absolute;
+  left: -1000px;
+  top: -1000px;
+}
+
 #home #navigator ul li li {
   background: none;
   padding: 0px;
@@ -115,11 +129,18 @@ h2 {
   color: white;
 }
 
-#home #navigator a {
+#home #navigator a.primary-link,
+#home #navigator .secondary-links a,
+#home #navigator a.more {
   text-decoration: none;
   border: none;
   text-transform: uppercase;
   letter-spacing: -0.1em;
+}
+
+#home #navigator a.primary-link:hover,
+#home #navigator .secondary-links a:hover {
+  color: white;
 }
 
 #home #navigator a.primary-link {
@@ -175,15 +196,30 @@ h2 {
   line-height: 1.5;
 }
 
+#home #navigator .details a {
+  color: white;
+  border: none;
+}
+
+#home #navigator .active .details a {
+  border-bottom: 1px solid #f68e92;
+}
+
+#home #navigator .active .details a:hover {
+  color: white;
+  border-bottom: 1px solid white;
+}
+
 #home #navigator .more {
   color: white;
 }
 
-#home #navigator .active .more {
+#home #navigator .active .details a.more {
   color: #f68e92;
+  border: none;
 }
 
-#home #navigator .active a:hover {
+#home #navigator .active .details a.more:hover {
   color: white;
 }
 
@@ -407,10 +443,20 @@ blockquote.testimonial a {
 
 #footer {
   background: white;
-  font-size: 85%;
   color: #999;
   padding-top: 4ex;
   padding-bottom: 6ex;
+  font-family: Baskerville, Georgia, serif;
+  font-style: italic;
+}
+
+#footer a.robotk {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  color: #8cc63f;
+  letter-spacing: -0.1em;
+  font-style: normal;
+  border: none;
 }
 
 #footer-right {

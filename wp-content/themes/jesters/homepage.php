@@ -15,7 +15,7 @@
   </div>
 
   <div id="navigator" class="span-24">
-    <div id="main-photo" class="span-8">&nbsp;</div>
+    <div id="splash-photo" class="span-8"><img src="/theme/images/splash-events.png" />&nbsp;</div>
     <div id="tabs" class="span-16 last">
       <ul>
 				<?php
@@ -38,7 +38,7 @@
 						}
 						echo "><p>";
 						echo get_post_meta($page->ID, 'summary', true);
-						echo " <a class=\"more\" href=\"/{$page->post_name}\">Read more »</a></p></div></div></li>";
+						echo " <a class=\"more\" href=\"/{$page->post_name}\">Read more »</a></p></div></div><img src=\"/theme/images/splash-{$page->post_name}.png\" /></li>";
 						$i++;
 					}
 				}
@@ -51,9 +51,13 @@
     <div class="span-8">
       <h2>What’s on?</h2>
     </div>
-    <div class="span-16">
+    <div class="span-16 last">
       
     </div>
+  </div>
+  
+  <div id="additional-content" class="span-24">
+    
   </div>
 </div>
 
@@ -63,7 +67,12 @@
       var section = $(this).closest('li').not('.active');
       if (section.length > 0) {
 				var old_section = section.siblings('.active').removeClass('active');
-        section.addClass('active').find('.teaser').show('blind', 'fast', function() { old_section.find('.teaser').hide('blind'); });
+				$('#splash-photo img').fadeOut('fast');
+        section.addClass('active').find('.teaser').show('blind', 'fast', function() {
+          //$('#home #navigator').css('background-image', 'url(' + section.find('img').attr('src') + ')');
+          $('#splash-photo img').attr('src', section.find('img').attr('src')).fadeIn();
+          old_section.find('.teaser').hide('blind');
+        });
         //section.siblings('.active').removeClass('active').find('.teaser').hide('blind');
       }
       return false;

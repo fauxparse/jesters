@@ -10,7 +10,7 @@
         &nbsp;
       </div>
       <div id="footer-right" class="span-16 last">
-        &copy; 2009 The Court Jesters. Web design and development by <a href="http://robo.tk">robo.tk</a>.
+        &copy; 2009 The Court Jesters. Web design and development by <a class="robotk" href="http://robo.tk">robo.tk</a>.
       </div>
     </div>
   </div>
