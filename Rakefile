@@ -17,3 +17,9 @@ namespace "db" do
     end
   end
 end
+
+namespace "staging" do
+  task "update" do
+    `ssh robo.tk "cd /var/www/jesters && git pull origin master"`
+  end
+end
