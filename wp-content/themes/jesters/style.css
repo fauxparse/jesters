@@ -255,6 +255,10 @@ h2 {
   background: #ed1c24 url(images/section-header.png) no-repeat 100% 0px;
 }
 
+#main-inner {
+  padding-top: 8px;
+}
+
 /* Navigation {{{ */
 
 .navigation {
@@ -446,6 +450,36 @@ blockquote.testimonial a {
 #testimonials blockquote.testimonial a.more { display: none; }
 
 /* }}} */
+
+/* About Us {{{ */
+
+#headshots {
+  
+}
+
+#headshots .user {
+  margin-bottom: 8px;
+}
+
+#headshots .user img {
+  display: block;
+}
+
+#headshots .user a {
+  border: none;
+}
+
+#headshots .user .name {
+  font-weight: bold;
+  color: white;
+  background: black;
+  display: block;
+  text-align: center;
+  border-top: 1px solid white;
+}
+
+/* }}} */
+
 
 /* Footer {{{ */
 
