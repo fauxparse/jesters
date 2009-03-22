@@ -16,13 +16,19 @@
         <div id="main-inner">
           <?php
             if ($subsection) {
-              $tertiary_post_list = wp_list_pages("title_li=&child_of={$subsection->ID}&depth=1&echo=0");
+              $tertiary_post_list = wp_list_pages("title_li=&child_of={$subsection->ID}&depth=1&echo=0&exclude_tree=8");
               if ($tertiary_post_list != "") {
                 echo "<div class=\"tertiary navigation\"><ul><li class=\"first".($post->ID == $subsection->ID ? ' current_page_item' : '')."\"><a href=\"/{$root->post_name}/{$subsection->post_name}\">Overview</a></li>{$tertiary_post_list}</ul></div>";
               }
             }
           ?>
-          <?php the_content(); ?>
+          <?php
+            if (isset($custom_content)) {
+              echo $custom_content;
+            } else {
+              the_content();
+            }
+          ?>
         </div>
       </div>
     </div>

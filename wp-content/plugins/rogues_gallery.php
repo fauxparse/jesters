@@ -26,12 +26,13 @@ function rogue_headshots() {
     if ($i % 4 == 3) {
       $output .= " last";
     }
-    $output .= "\" id=\"user_{$user->ID}\"><a href=\"/about/us/{$user->user_nicename}\" title=\"{$user->display_name}\">";
+    $output .= "\" id=\"user_{$user->ID}\"><a href=\"/about/us?user={$user->user_login}\" title=\"{$user->display_name}\" rel=\"facebox\">";
     $portrait_url = get_cimyFieldValue($user->ID, "HEADSHOT");
   	$output .= "<img src=\"".$portrait_url."\" alt=\"{$user->display_name}\" />";
     $output .= "<span class=\"name\">{$user->display_name}</span></a></div>";
     $i++;
   }
+  $output .= "<script type=\"text/javascript\">\n\$(document).ready(function() { \$('.user a').facebox(); })\n</script>";
   $output .= '</div>';
   return $output;
 }
