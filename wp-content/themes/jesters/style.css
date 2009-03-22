@@ -562,4 +562,11 @@ blockquote.testimonial a {
   top: -4px !important;
 }
 
+#main .wpcf7-validation-errors,
+#main .wpcf7-mail-sent-ok {
+  border: 16px solid #ccc;
+  background: #ffc;
+  margin: 0px;
+}
+
 /* }}} */
