@@ -477,7 +477,7 @@ blockquote.testimonial a {
 .form {
   background: #ccc;
   padding: 16px 0px;
-  margin: 0px;
+  margin: -16px 0px 0px;
 }
 
 .form .field {
@@ -502,6 +502,12 @@ blockquote.testimonial a {
   border: none;
   background: #f2f2f2;
   display: block;
+}
+
+.form .required input,
+.form .required textarea {
+  margin-left: 12px;
+  border-left: 4px solid #ed1c24;
 }
 
 .form input.text:focus,
@@ -560,6 +566,7 @@ blockquote.testimonial a {
   right: 16px !important;
   left: auto !important;
   top: -4px !important;
+  padding-left: 16px;
 }
 
 #main .wpcf7-validation-errors,
