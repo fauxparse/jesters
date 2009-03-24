@@ -57,6 +57,7 @@ h2 {
   height: 128px;
   position: relative;
   background: none;
+  z-index: 100;
 }
 
 #header #logo {
@@ -90,6 +91,7 @@ h2 {
   margin-bottom: 16px;
   line-height: normal;
   position: relative;
+  z-index: 50;
 }
 
 #home #navigator #splash-photo div {
@@ -97,8 +99,9 @@ h2 {
   left: 0px;
   bottom: 0px;
   width: 100%;
-  height: 100%;
+  height: 300px;
   background: url(images/splash-events.png) no-repeat 0px 100%;
+  z-index: 50;
 }
 
 #home #navigator ul {
