@@ -25,6 +25,9 @@
   <script type="text/javascript" src="/theme/facebox/facebox.js"></script>
   <?php if ( is_singular() ) wp_enqueue_script( 'comment-reply' ); ?>
   <?php wp_head(); ?>
+	<script type="text/javascript">
+		jQuery(document).ready(function() { $('a[rel*=facebox]').facebox(); })
+	</script>
 </head>
 <body>
   <div class="container">

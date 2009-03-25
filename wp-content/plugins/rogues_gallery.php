@@ -32,7 +32,7 @@ function rogue_headshots() {
     $output .= "<span class=\"name\">{$user->display_name}</span></a></div>";
     $i++;
   }
-  $output .= "<script type=\"text/javascript\">\n\$(document).ready(function() { \$('.user a').facebox(); })\n</script>";
+  //$output .= "<script type=\"text/javascript\">\njQuery(document).ready(function() { \$('a[rel*=facebox]').facebox(); })\n</script>";
   $output .= '</div>';
   return $output;
 }

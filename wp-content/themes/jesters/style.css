@@ -502,14 +502,12 @@ blockquote.testimonial a {
 
 .bio h1 {
   background: #999;
-  line-height: 0.6;
   vertical-align: bottom;
   font-weight: bold;
   text-transform: uppercase;
   color: white;
   letter-spacing: -0.1em;
-  padding-top: 8px;
-  padding-left: 0.25em;
+  padding-left: 8px;
   margin-bottom: 8px;
 }
 
@@ -524,6 +522,7 @@ blockquote.testimonial a {
   padding-bottom: 6ex;
   font-family: Baskerville, Georgia, serif;
   font-style: italic;
+  line-height: normal;
 }
 
 #footer a.robotk {
@@ -536,6 +535,7 @@ blockquote.testimonial a {
 }
 
 #footer-right {
+  position: relative;
 }
 
 /* }}} */
