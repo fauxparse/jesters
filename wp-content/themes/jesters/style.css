@@ -98,7 +98,7 @@ h2 {
   position: absolute;
   left: 0px;
   bottom: 0px;
-  width: 100%;
+  width: 312px;
   height: 300px;
   background: url(images/splash-events.png) no-repeat 0px 100%;
   z-index: 50;
@@ -282,7 +282,7 @@ h2 {
 }
 
 .secondary {
-  height: 1.3em;
+  height: 1.2em;
   margin-top: 0.5em;
   margin-left: 312px;
 }
@@ -333,6 +333,7 @@ h2 {
   border-left: 1px solid #f68e92;
   height: 1.3em;
   line-height: 1.3em;
+  font-size: 90%;
 }
 
 .secondary li.first a { border: none; }
@@ -361,8 +362,8 @@ h2 {
 
 #header h1 {
   clear: left;
-  padding: 0px 0px 8px 320px;
-  margin: 0px;
+  margin: 0px 0px 8px 320px;
+  padding: 0px;
   font-size: 300%;
   color: white;
   font-weight: bold;
@@ -513,7 +514,6 @@ blockquote.testimonial a {
 }
 
 /* }}} */
-
 
 /* Footer {{{ */
 
