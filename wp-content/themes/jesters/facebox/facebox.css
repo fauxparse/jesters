@@ -28,6 +28,7 @@
 
 #facebox .popup {
   position: relative;
+  width: 552px;
 }
 
 #facebox table {
