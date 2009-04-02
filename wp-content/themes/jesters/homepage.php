@@ -52,7 +52,25 @@
       <h2>What’s on?</h2>
     </div>
     <div class="span-16 last">
-      
+			<ol class="posts">
+				<?php
+					global $post;
+				 	$posts = get_posts('category=3');
+					$i = 0;
+				 	foreach ($posts as $post) :
+						setup_postdata($post);
+				?>
+					<li>
+						<h3><?php the_title_attribute(); ?></h3>
+						<?php the_content(); ?>
+					</li>
+				<?php
+						if (!is_stickied()) { $i++; }
+						if ($i > 1) { break; }
+					endforeach;
+				?>
+			</ol>
+			<div class="cleaner">&nbsp;</div>
     </div>
   </div>
   

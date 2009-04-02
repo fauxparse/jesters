@@ -51,6 +51,38 @@ function compare_users(&$a, &$b) {
 	}
 }
 
+function player_portrait($atts, $content = null) {
+	global $wpdb, $blog_id;
+	extract(shortcode_atts(array(
+		'name' => '',
+		'role' => 'player'
+	), $atts));
+	if (!empty($name)) {
+		$results = $wpdb->get_results("SELECT * FROM {$wpdb->users} JOIN {$wpdb->usermeta} ON {$wpdb->usermeta}.user_id = {$wpdb->users}.ID WHERE {$wpdb->users}.user_login = '{$name}'" );
+		if (!empty($results)) {
+			$output = "<div class=\"player {$role}\">";
+			$user = $results[0];
+			foreach ($results as $result) {
+				$user->{$result->meta_key} = $result->meta_value;
+			}
+			$output .= "<a href=\"/about/us?user={$user->user_login}\" title=\"{$user->display_name}\" rel=\"facebox\">";
+			$portrait_url = get_cimyFieldValue($user->ID, "HEADSHOT");
+			$output .= "<img src=\"".$portrait_url."\" alt=\"{$user->display_name}\" />";
+			$output .= "<span class=\"name\">{$user->nickname}";
+			if ($role != 'player') {
+				$output .= " <strong>({$role})</strong>";
+			}
+			$output .="</span></a></div>";
+			return $output;
+		} else {
+			return "[can't find {$name}]";
+		}
+	} else {
+		return "[something went wrong]";
+	}
+}
+
 add_shortcode('headshots', rogue_headshots);
+add_shortcode('player', player_portrait);
 
 ?>

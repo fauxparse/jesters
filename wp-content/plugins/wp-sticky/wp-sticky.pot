@@ -1,0 +1,154 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WP-Sticky 1.40\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-12-12 13:36+0800\n"
+"PO-Revision-Date: 2008-12-12 13:36+0800\n"
+"Last-Translator: Lester Chan <lesterchan@gmail.com>\n"
+"Language-Team: Lester Chan <lesterchan@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: SINGAPORE\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;__ngettext_noop:1,2\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: sticky-options.php:43
+msgid "Sticky Options Updated"
+msgstr ""
+
+#: sticky-options.php:46
+msgid "No Sticky Option Updated"
+msgstr ""
+
+#: sticky-options.php:52
+#: sticky-options.php:189
+msgid "UNINSTALL WP-Sticky"
+msgstr ""
+
+#: sticky-options.php:59
+#, php-format
+msgid "Table '%s' has been deleted."
+msgstr ""
+
+#: sticky-options.php:68
+#, php-format
+msgid "Setting Key '%s' has been deleted."
+msgstr ""
+
+#: sticky-options.php:72
+#, php-format
+msgid "Error deleting Setting Key '%s'."
+msgstr ""
+
+#: sticky-options.php:94
+#: sticky-options.php:147
+msgid "Uninstall WP-Sticky"
+msgstr ""
+
+#: sticky-options.php:95
+#, php-format
+msgid "<a href=\"%s\">Click Here</a> To Finish The Uninstallation And WP-Sticky Will Be Deactivated Automatically."
+msgstr ""
+
+#: sticky-options.php:107
+msgid "Sticky Options"
+msgstr ""
+
+#: sticky-options.php:110
+msgid "Categories Only:"
+msgstr ""
+
+#: sticky-options.php:113
+#: sticky-options.php:123
+msgid "No"
+msgstr ""
+
+#: sticky-options.php:114
+#: sticky-options.php:124
+#: sticky-options.php:188
+msgid "Yes"
+msgstr ""
+
+#: sticky-options.php:116
+msgid "Display announcement and sticky posts only when viewing categories."
+msgstr ""
+
+#: sticky-options.php:120
+msgid "Display Date:"
+msgstr ""
+
+#: sticky-options.php:126
+msgid "Displays the date instead of the <strong>Announcement Banner</strong> on announcement posts."
+msgstr ""
+
+#: sticky-options.php:130
+msgid "Announcement Banner:"
+msgstr ""
+
+#: sticky-options.php:133
+msgid "This banner is displayed instead of the date if you choose 'No' for <strong>Display Date</strong>."
+msgstr ""
+
+#: sticky-options.php:138
+msgid "Save Changes"
+msgstr ""
+
+#: sticky-options.php:149
+msgid "Deactivating WP-Sticky plugin does not remove any data that may have been created, such as the sticky options. To completely remove this plugin, you can uninstall it here."
+msgstr ""
+
+#: sticky-options.php:152
+msgid "WARNING:"
+msgstr ""
+
+#: sticky-options.php:153
+msgid "Once uninstalled, this cannot be undone. You should use a Database Backup plugin of WordPress to back up all the data first."
+msgstr ""
+
+#: sticky-options.php:156
+msgid "The following WordPress Options/Tables will be DELETED:"
+msgstr ""
+
+#: sticky-options.php:161
+msgid "WordPress Options"
+msgstr ""
+
+#: sticky-options.php:162
+msgid "WordPress Tables"
+msgstr ""
+
+#: sticky-options.php:189
+msgid ""
+"You Are About To Uninstall WP-Sticky From WordPress.\\n"
+"This Action Is Not Reversible.\\n"
+"\\n"
+" Choose [Cancel] To Stop, [OK] To Uninstall."
+msgstr ""
+
+#: wp-sticky.php:47
+msgid "WP-Sticky"
+msgstr ""
+
+#: wp-sticky.php:124
+#: wp-sticky.php:265
+msgid "Sticky"
+msgstr ""
+
+#: wp-sticky.php:127
+#: wp-sticky.php:263
+#: wp-sticky.php:300
+msgid "Announcement"
+msgstr ""
+
+#: wp-sticky.php:267
+msgid "Normal"
+msgstr ""
+
+#: wp-sticky.php:275
+msgid "Post Sticky Status"
+msgstr ""
+

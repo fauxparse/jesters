@@ -250,6 +250,8 @@ h3 {
   color: white;
 }
 
+/* What's On {{{ */
+
 #home #whats-on {
   background: #333;
   color: white;
@@ -264,6 +266,52 @@ h3 {
   text-indent: 8px;
   letter-spacing: -0.1em;
 }
+
+#whats-on .posts {
+  margin: 0px;
+  padding: 8px 0px;
+}
+
+#whats-on .posts li {
+  display: block;
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+#whats-on .posts .player {
+  float: left;
+  margin: 0px 8px 8px 0px;
+  width: 76px;
+}
+
+#whats-on .posts .player a {
+  border: none;
+}
+
+#whats-on .posts .player img {
+  width: 76px;
+  height: 96px;
+  display: block;
+}
+
+#whats-on .posts .player .name {
+  display: block;
+  color: white;
+  text-align: center;
+}
+
+#whats-on .posts .player .name strong {
+  color: #ed1c24;
+  font-weight: normal;
+  font-size: 85%;
+}
+
+#whats-on .posts h3 {
+  font-size: 150%;
+}
+
+/*}}}*/
 
 /* }}} */
 
