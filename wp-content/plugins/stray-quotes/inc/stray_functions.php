@@ -142,7 +142,7 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 			   $last = '&nbsp;'; // nor the last page link
 			}		
 			
-			$loader = $first . $prev . $nav . $next . $last;
+			$loader = '';//$first . $prev . $nav . $next . $last;
 			
 		} else {
 			
@@ -181,7 +181,7 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 			   $next = '&nbsp;'; // we're on the last page, don't print next link
 			}
 			
-			$loader = $prev.$next;
+			$loader = '';//$prev.$next;
 			
 		}
 		

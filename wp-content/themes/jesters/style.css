@@ -43,6 +43,16 @@ h2 {
   letter-spacing: -0.1em;
 }
 
+h3 {
+  margin: 0px 0px 0.5ex;
+  padding: 0px;
+  font-size: 200%;
+  font-weight: bold;
+  color: #666;
+  text-transform: lowercase;
+  letter-spacing: -0.1em;
+}
+
 .cleaner {
   clear: both;
   height: 0px;
@@ -479,13 +489,20 @@ blockquote.testimonial a {
   border: none;
 }
 
-#headshots .user .name {
+#headshots .user .name,
+#headshots .user .kind {
   font-weight: bold;
   color: white;
   background: black;
   display: block;
   text-align: center;
   border-top: 1px solid white;
+}
+
+#headshots .user .kind {
+  font-weight: normal;
+  font-size: 90%;
+  border-top: none;
 }
 
 .bio {
