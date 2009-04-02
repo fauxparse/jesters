@@ -2,10 +2,10 @@
 /*
 Plugin Name: Stray Random Quotes
 Plugin URI: http://www.italyisfalling.com/stray-random-quotes/
-Description: Display random words everywhere on your blog. Easy to custom and manage. Ajax enabled. Compatible with WP 2.7.
+Description: Display and rotate random quotes and random words everywhere on your blog. Easy to custom and manage. Ajax enabled.
 Author: ico@italyisfalling.com
 Author URI:http://www.italyisfalling.com/lines-of-code/
-Version: 1.8.9
+Version: 1.9.0
 License: GPL compatible
 */
 
@@ -18,7 +18,7 @@ if (DIR == 'plugins') $dir = '';
 define("WP_STRAY_QUOTES_PATH", get_option("siteurl") . "/wp-content/plugins/" . DIR);
 
 // !!! remember to change this with every new version !!!
-define("WP_STRAY_VERSION", 189);
+define("WP_STRAY_VERSION", 190);
 
 //get ready for local
 $currentLocale = get_locale();

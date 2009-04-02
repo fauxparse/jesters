@@ -1,10 +1,10 @@
 === Contact Form 7 ===
 Contributors: takayukister
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2908336
+Donate link: http://pledgie.com/campaigns/3117
 Tags: contact, contact form, email, ajax, captcha, akismet
 Requires at least: 2.5
 Tested up to: 2.7.1
-Stable tag: 1.9.3
+Stable tag: 1.9.4
 
 Just another contact form plugin. Simple but flexible.
 
@@ -13,6 +13,8 @@ Just another contact form plugin. Simple but flexible.
 Just another contact form plugin. Simple but flexible.
 
 Contact Form 7 can manage multiple contact forms, plus you can customize the form and the mail contents flexibly with simple markup. The form supports Ajax-powered submitting, CAPTCHA, Akismet spam filtering and so on.
+
+**Note: Contact Form 7's CAPTCHA module has been separated as [Really Simple CAPTCHA](http://wordpress.org/extend/plugins/really-simple-captcha/) plugin. Now you need to install it if you use CAPTCHA. If you don't, you can use as in the past.**
 
 Since being published in August 2007, Contact Form 7 has been translated into a number of languages. Our thanks and appreciation must go to the following for their contributions:
 
@@ -23,9 +25,11 @@ Since being published in August 2007, Contact Form 7 has been translated into a 
 * Catalan (ca_ES) - [Jordi Sancho](http://www.qasolutions.net/blog)
 * Chinese, Simplified (zh_CN) - [Soz](http://www.webtoolol.com/)
 * Chinese, Traditional (zh_TW) - [James Wu](http://jameswublog.com)
+* Croatian (hr) - [tolingo Translation Services](http://www.tolingo.com)
 * Czech (cs_CZ) - Korry
-* Danish (da_DK) - [Jens Griebel](http://www.kompas-it.dk/)
+* Danish (da_DK) - [Jens Griebel](http://www.kompas-it.dk/) (updated by [Georg S. Adamsen](http://wordpress.blogos.dk/))
 * Dutch (nl_NL) - [Chris Devriese](http://www.100it.be/)
+* Estonian (et) - [Peeter Rahuvarm](http://www.kraabus.ee)
 * Finnish (fi) - [Miika Turunen](http://www.webwork.fi/)
 * French (fr_FR) - [Jillij](http://www.jillij.com/)
 * Georgian (ka_GE) - [Nodar Davituri](http://omedia.ge/)
@@ -35,7 +39,7 @@ Since being published in August 2007, Contact Form 7 has been translated into a 
 * Hindi (hi_IN) - [Tarun Joshi](http://www.readers-cafe.net/)
 * Hungarian (hu_HU) - [Andras Hirschler](http://hia.itblog.hu/)
 * Indonesian (id_ID) - [Hendry Lee](http://blogbuildingu.com/)
-* Italian (it_IT) - [Bruno](http://www.brunosalzano.com)
+* Italian (it_IT) - [Bruno](http://www.brunosalzano.com) (updated by [Gianni Diurno](http://gidibao.net/))
 * Japanese (ja) - [Takayuki Miyoshi](http://ideasilo.wordpress.com) (plugin author)
 * Korean (ko_KR) - Seong Eun Lee (updated by [Jong-In Kim](http://incommunity.codex.kr/wordpress/))
 * Latvian (lv) - [Sandis Veinbergs](http://www.kleofass.lv/)

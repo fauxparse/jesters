@@ -1,5 +1,4 @@
-<?php 
-function stray_tools(){
+<?php function stray_tools(){
 	
 	if(!empty($_POST['do'])) {
 		
@@ -138,8 +137,7 @@ function stray_tools(){
     <p class="submit">&nbsp;<input type="hidden" name="do" value="Update" /><input type="submit" name="enable" value="<?php _e('Toggle shortcodes', 'stray-quotes'); ?>">	
     </p>
 	</form></blockquote>
-    
+        
 	</div><?php
 
-}
-?>
+} ?>

@@ -42,14 +42,47 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 	if (is_string($widgetid)) settype($widgetid, "integer"); 
 	if (!$widgetid)$widgetid = mt_rand(0,999999);
 	
-	//make sure it is not a string
+	//make sure certain values are not string or empty
+	if (is_string($sequence)) {
+		if ($sequence == 'false') {
+			settype($sequence, "boolean");
+			$sequence = false;			
+		} else if ($sequence == 'true') {
+			settype($sequence, "boolean");
+			$sequence = true;			
+		} 
+	}
 	if(is_string($multi)) settype($multi, "integer"); 
 	if($multi == 0 || $multi == '' || false === $multi)$multi = 1;
 	if(is_string($timer)) settype($timer, "integer");
 	if($timer == '' || false === $timer)$timer = 0;
+	if (is_string($noajax)) {
+		if ($noajax == 'false') {
+			settype($noajax, "boolean");
+			$noajax = false;			
+		} else if ($noajax == 'true') {
+			settype($noajax, "boolean");
+			$noajax = true;			
+		} else {
+			settype($noajax, "boolean");
+			$noajax = false;			
+		}
+	}	
+	if (is_string($fullpage)) {
+		if ($fullpage == 'false') {
+			settype($fullpage, "boolean");
+			$fullpage = false;			
+		} else if ($fullpage == 'true') {
+			settype($fullpage, "boolean");
+			$fullpage = true;			
+		} else {
+			settype($fullpage, "boolean");
+			$fullpage = false;			
+		}
+	}
 	if($orderby=='')$orderby='quoteID';
 	if($sort=='')$sort='ASC';
-		
+	
 	//sql for more than one quote
 	if ($multi > 1){
 		
@@ -153,7 +186,7 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 		}
 		
 		//if random
-		if (!$sequence) { 
+		if (!$sequence || $sequence === false) { 
 			$orderby ='RAND()';
 			$sort = '';
 		} else {
@@ -167,63 +200,44 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 		. " LIMIT " . $offset. ", ". $multi;
 		$offset = $myoffset+$multi;
 		
-		$sql2 = "SELECT COUNT(`quoteID`) AS 'rows' FROM `" . WP_STRAY_QUOTES_TABLE . "` WHERE visible='yes'" . $categoryquery;
-		$totalquotes = $wpdb->get_var($sql2);
 		$result = $wpdb->get_results($sql);
+		$totalquotes = count($result)-1;
 	
 	} 
 	
 	//sql for one quote only
 	else {		
 		
-		//if not a specific quote
-		if ( !$thisid || $thisid == false || $thisid == '' ){
-			
-			//sql the quotes
-			$offset=0;		
-			$sql = "SELECT `quoteID`,`quote`,`author`,`source`,`category` FROM `" 
-			. WP_STRAY_QUOTES_TABLE . "` WHERE visible='yes'" .$categoryquery
-			. " ORDER BY ". "`".$orderby."` " . $sort ;
+		//sql the quotes
+		$offset=0;		
+		$sql = "SELECT `quoteID`,`quote`,`author`,`source`,`category` FROM `" 
+		. WP_STRAY_QUOTES_TABLE . "` WHERE visible='yes'" .$categoryquery
+		. " ORDER BY ". "`".$orderby."` " . $sort ;
 
-			$result = $wpdb->get_results($sql);
-			$totalquotes = count($result);
+		$result = $wpdb->get_results($sql);
+		$totalquotes = count($result)-1;
 			
-			//check and make the random/not random thing
-			if ($sequence) {
-				
-				//if $sequence=true, make it a random number
-				if ($sequence == 'true' || $sequence === true)$sequence = mt_rand(0, ($totalquotes-1));
-				
-				else {
-					
-					//make sure it is not some other string
-					if (is_string($sequence)) settype($sequence, "integer"); 		
-					
-					//if it is a number
-					if (is_int($sequence)) {
-						//start over when the last one is reached
-						if ($sequence == ($totalquotes-1))$sequence = -1;
-						//grow the sequence
-						$sequence = $sequence+1;
-					}
-					
-				}
-				
-			}
-		
-		} 
-		
 		//if it is a specific quote
-		else {
+		if ( $thisid && $thisid != '' && !is_int($sequence) ){
 			
-			$sql = "SELECT `quoteID`,`quote`,`author`,`source`,`category` FROM `" 
-			. WP_STRAY_QUOTES_TABLE 
-			. "` WHERE `quoteID`='"
-			. $thisid."'";
-
-			$result = $wpdb->get_row($sql);
+			foreach($result as $get_one){
+				
+				if ($get_one->quoteID == $thisid) {
+					
+					$specificresult = $get_one;
+					settype($sequence,"integer");
+					for ($i=0; $i<count($result); ++$i) {
+						if ($get_one==$result[$i]) $sequence = $i;
+					}
+					/*$sequence = array_search($get_one,$result);
+					settype($sequence,"integer");*/
+					$sequence = $sequence-1;
+				
+				}
+			}
+			
 		}
-		
+				
 	}
 	
 	//if the sql has something to say, build the output
@@ -239,11 +253,35 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 			
 			//make things into a string (for javascript)
 			if(is_array($categories))$categories = implode(',', $categories);
-			settype($multi,"string");
-			settype($offset,"string");
-			settype($timer,"string");
-			settype($widgetid,"string");
-			settype($sequence,"string"); //this otherwise "0" would be considered as "false", long story
+
+			//check and make the random/not random thing
+			if ($sequence) {
+				
+				//if $sequence=true bool, make it a random number
+				if ($sequence === true){
+					 settype($sequence, "integer"); 	
+					 $sequence = mt_rand(0, $totalquotes);
+				} 
+				
+				//or forward the sequence
+				else {
+
+					//if it is not already a number		
+					settype($sequence, "integer"); 
+								
+					//start over when the last one is reached
+					if ($sequence == $totalquotes)$sequence = 0;
+					//grow the sequence
+					else $sequence = $sequence+1;
+					
+					//this otherwise "0" would be considered as "false" by javascript
+					if ($sequence == 0) {
+						settype($sequence,"string"); 
+						$sequence == '0';
+					}
+					
+				}
+			}
 		
 			//override default new quote loader
 			if ($linkphrase)$quoteloader = $linkphrase;
@@ -280,21 +318,21 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 		//output if one quote only
 		else {
 			
-			//if not a specific quote
-			if ( !$thisid || $thisid == false || $thisid == '' ){
-				
+			//if a specific quote
+			if ( $thisid && $thisid != '' )$output .= stray_output_one($specificresult,$multi);
+			
+			//if it is not a specific quote
+			else {
 				//get the next quote in sequence
-				if ($sequence)$get_one = $result[$sequence];	
+				if ($sequence)$get_one = $result[$sequence];
+				
 				//get the quote randomly
-				else $get_one = $result[mt_rand(0, ($totalquotes-1))];
+				else $get_one = $result[mt_rand(0, $totalquotes)];
 				$output .= stray_output_one($get_one,$multi);
+			}
 			
-			} 
-			
-			//if it is a specific quote
-			else $output .= stray_output_one($result,$multi);
 		}
-
+		
 		//if ajax loader is NOT disabled
 		if ($strayajax != 'Y' && $noajax != true ) {
 				
@@ -316,9 +354,9 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 		//AJAX disabled AND many quotes (output the pagination)
 		else if ($multi > 1) {
 			
-			//$output .= $beforeloader;
-			//$output .= $loader;
-			//$output .= $afterloader;			
+			$output .= $beforeloader;
+			$output .= $loader;
+			$output .= $afterloader;			
 		}
 		
 		return $output;
@@ -383,7 +421,6 @@ function stray_id_shortcut($atts, $content=NULL) {
 	), $atts));	
 	
 	return get_stray_quotes('',true,$linkphrase,'','',$noajax,'','','','','',$id);
-
 }
 
 //this FORMATS a given quote according to the settings
