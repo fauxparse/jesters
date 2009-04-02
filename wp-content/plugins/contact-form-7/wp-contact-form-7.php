@@ -4,7 +4,7 @@ Plugin Name: Contact Form 7
 Plugin URI: http://ideasilo.wordpress.com/2007/04/30/contact-form-7/
 Description: Just another contact form plugin. Simple but flexible.
 Author: Takayuki Miyoshi
-Version: 1.9.3
+Version: 1.9.4
 Author URI: http://ideasilo.wordpress.com/
 */
 
@@ -25,7 +25,7 @@ Author URI: http://ideasilo.wordpress.com/
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-define('WPCF7_VERSION', '1.9.3');
+define('WPCF7_VERSION', '1.9.4');
 
 if (! defined('WP_CONTENT_DIR'))
     define('WP_CONTENT_DIR', ABSPATH . 'wp-content');
@@ -41,14 +41,6 @@ if (! defined('WPCF7_PLUGIN_DIR'))
     define('WPCF7_PLUGIN_DIR', WP_PLUGIN_DIR . '/' . plugin_basename(dirname(__FILE__)));
 if (! defined('WPCF7_PLUGIN_URL'))
     define('WPCF7_PLUGIN_URL', WP_PLUGIN_URL . '/' . plugin_basename(dirname(__FILE__)));
-
-if (! defined('WPCF7_CAPTCHA_TMP_DIR'))
-    define('WPCF7_CAPTCHA_TMP_DIR', WP_CONTENT_DIR . '/uploads/wpcf7_captcha');
-if (! defined('WPCF7_CAPTCHA_TMP_URL'))
-    define('WPCF7_CAPTCHA_TMP_URL', WP_CONTENT_URL . '/uploads/wpcf7_captcha');
-
-if (! defined('WPCF7_UPLOADS_TMP_DIR'))
-    define('WPCF7_UPLOADS_TMP_DIR', WP_CONTENT_DIR . '/uploads/wpcf7_uploads');
 
 if (! defined('WPCF7_AUTOP'))
     define('WPCF7_AUTOP', true);
@@ -175,7 +167,7 @@ class tam_contact_form_seven {
         $reason = array();
         
         $this->init_uploads(); // Confirm upload dir
-        $uploads_dir = WPCF7_UPLOADS_TMP_DIR;
+        $uploads_dir = $this->upload_tmp_dir();
         
         $fes = $this->form_elements($contact_form['form'], false);
         
@@ -277,11 +269,8 @@ class tam_contact_form_seven {
 		$mail_recipient = preg_replace_callback($regex, $callback, $mail_template['recipient']);
 		$mail_headers = "From: $mail_sender\n";
 
-        if ($attachments) {
-            $mail_headers .= "Content-Type: multipart/mixed\n";
-        } elseif ($mail_template['use_html']) {
+        if ($mail_template['use_html'])
             $mail_headers .= "Content-Type: text/html\n";
-        }
 
         if ($attachments) {
             $for_this_mail = array();
@@ -307,7 +296,7 @@ class tam_contact_form_seven {
         
             // Special [wpcf7.remote_ip] tag
             if ('wpcf7.remote_ip' == $matches[1])
-                return preg_replace('/[^0-9., ]/', '', $_SERVER['REMOTE_ADDR']);
+                return preg_replace('/[^0-9a-f.:, ]/', '', $_SERVER['REMOTE_ADDR']);
         
             return $matches[0];
         }
@@ -442,6 +431,9 @@ class tam_contact_form_seven {
 	}
     
     function upgrade($contact_form) {
+        if (empty($contact_form))
+            return $contact_form;
+
         $contact_form = $this->upgrade_160($contact_form);
         $contact_form = $this->upgrade_181($contact_form);
         $contact_form = $this->upgrade_190($contact_form);
@@ -603,13 +595,13 @@ class tam_contact_form_seven {
 		
 		if (isset($plugin_page) && $plugin_page == plugin_basename(__FILE__)) {
         
-            $admin_stylesheet_url = WPCF7_PLUGIN_URL . '/admin-stylesheet.css';
-            $javascript_url = WPCF7_PLUGIN_URL . '/wpcf7-admin.js';
+            $admin_stylesheet_url = WPCF7_PLUGIN_URL . '/admin/admin-stylesheet.css';
+            $javascript_url = WPCF7_PLUGIN_URL . '/admin/wpcf7-admin.js';
 
 			echo '<link rel="stylesheet" href="' . $admin_stylesheet_url . '" type="text/css" />';
             
             if ('rtl' == get_bloginfo('text_direction')) {
-                $admin_stylesheet_rtl_url = WPCF7_PLUGIN_URL . '/admin-stylesheet-rtl.css';
+                $admin_stylesheet_rtl_url = WPCF7_PLUGIN_URL . '/admin/admin-stylesheet-rtl.css';
                 echo '<link rel="stylesheet" href="' . $admin_stylesheet_rtl_url . '" type="text/css" />';
             }
 
@@ -664,8 +656,10 @@ var _wpcf7 = {
 		show: "<?php echo js_escape(__("Show", 'wpcf7')); ?>",
 		hide: "<?php echo js_escape(__("Hide", 'wpcf7')); ?>",
 		fileSizeLimit: "<?php echo js_escape(__("File size limit", 'wpcf7')); ?>",
-		acceptableFileTypes: "<?php echo js_escape(__("Acceptable file types", 'wpcf7')); ?>"
-	}
+		acceptableFileTypes: "<?php echo js_escape(__("Acceptable file types", 'wpcf7')); ?>",
+        needReallySimpleCaptcha: "<?php echo js_escape(__("Note: To use CAPTCHA, you need Really Simple CAPTCHA plugin installed.", 'wpcf7')); ?>"
+	},
+    captchaMod: <?php echo (class_exists('ReallySimpleCaptcha')) ? 'true' : 'false' ?>
 };
 //]]>
 </script>
@@ -718,7 +712,7 @@ var _wpcf7 = {
 			$cf = $this->upgrade($cf);
 		}
 
-        require_once WPCF7_PLUGIN_DIR . '/includes/admin-panel.php';
+        require_once WPCF7_PLUGIN_DIR . '/admin/admin-panel.php';
 	}
 
 	function default_pack($title, $initial = false) {
@@ -1106,7 +1100,7 @@ var _wpcf7 = {
 			if ('captchac' == $type) {
 				$op = $this->captchac_options($options);
 				if ($filename = $this->generate_captcha($op)) {
-					$captcha_url = trailingslashit(WPCF7_CAPTCHA_TMP_URL) . $filename;
+					$captcha_url = trailingslashit($this->captcha_tmp_url()) . $filename;
 					$refill[$name] = $captcha_url;
                 }
 			}
@@ -1162,10 +1156,10 @@ var _wpcf7 = {
 	
 	function load_js() {
 		global $pagenow;
-//        if (is_admin() && $this->admin_menu_parent() == $pagenow && false !== strpos($_GET['page'], 'contact-form-7'))
-//			wp_enqueue_script('jquery');
+        if (is_admin() && $this->admin_menu_parent() == $pagenow && false !== strpos($_GET['page'], 'contact-form-7'))
+			wp_enqueue_script('jquery');
 		if (! is_admin())
-			wp_enqueue_script('jquery-form', '/wp-includes/js/jquery/jquery.form.js', array('jquery'), '1.0.3');
+			wp_enqueue_script('jquery-form');
 	}
 
 /* Processing form element placeholders */
@@ -1416,6 +1410,11 @@ var _wpcf7 = {
                 return $html;
                 break;
 			case 'captchac':
+                if (! class_exists('ReallySimpleCaptcha')) {
+                    return '<em>' . __('To use CAPTCHA, you need <a href="http://wordpress.org/extend/plugins/really-simple-captcha/">Really Simple CAPTCHA</a> plugin installed.', 'wpcf7') . '</em>';
+                    break;
+                }
+
 				$op = array();
 				// Default
 				$op['img_size'] = array(72, 24);
@@ -1431,7 +1430,7 @@ var _wpcf7 = {
 				}
 				if (is_array($op['img_size']))
 					$atts .= ' width="' . $op['img_size'][0] . '" height="' . $op['img_size'][1] . '"';
-				$captcha_url = trailingslashit(WPCF7_CAPTCHA_TMP_URL) . $filename;
+				$captcha_url = trailingslashit($this->captcha_tmp_url()) . $filename;
 				$html = '<img alt="captcha" src="' . $captcha_url . '"' . $atts . ' />';
 				$ref = substr($filename, 0, strrpos($filename, '.'));
 				$html = '<input type="hidden" name="_wpcf7_captcha_challenge_' . $name . '" value="' . $ref . '" />' . $html;
@@ -1498,7 +1497,7 @@ var _wpcf7 = {
         
         if (WPCF7_USE_PIPE && preg_match('/^(select[*]?|checkbox[*]?|radio)$/', $type) || 'quiz' == $type) {
             $pipes = $this->get_pipes($raw_values);
-            $values = array_keys($pipes);
+            $values = $this->get_pipe_ins($pipes);
         } else {
             $values =& $raw_values;
         }
@@ -1526,23 +1525,29 @@ var _wpcf7 = {
 			return $result;
 		}
 	}
-    
+
     function init_uploads() {
-        wp_mkdir_p(trailingslashit(WPCF7_UPLOADS_TMP_DIR));
-        @chmod(WPCF7_UPLOADS_TMP_DIR, 0733);
+        $dir = $this->upload_tmp_dir();
+        wp_mkdir_p(trailingslashit($dir));
+        @chmod($dir, 0733);
     }
     
     function init_captcha() {
+        if (! class_exists('ReallySimpleCaptcha'))
+            return false;
+
         if (! is_object($this->captcha))
-			$this->captcha = new tam_captcha();
+			$this->captcha = new ReallySimpleCaptcha();
 		$captcha =& $this->captcha;
         
-        $captcha->tmp_dir = trailingslashit(WPCF7_CAPTCHA_TMP_DIR);
+        $captcha->tmp_dir = trailingslashit($this->captcha_tmp_dir());
         wp_mkdir_p($captcha->tmp_dir);
+        return true;
     }
 
 	function generate_captcha($options = null) {
-        $this->init_captcha();
+        if (! $this->init_captcha())
+            return false;
         $captcha =& $this->captcha;
 		
 		if (! is_dir($captcha->tmp_dir) || ! is_writable($captcha->tmp_dir))
@@ -1579,21 +1584,24 @@ var _wpcf7 = {
 	}
 
 	function check_captcha($prefix, $response) {
-        $this->init_captcha();
+        if (! $this->init_captcha())
+            return false;
         $captcha =& $this->captcha;
 		
 		return $captcha->check($prefix, $response);
 	}
 
 	function remove_captcha($prefix) {
-        $this->init_captcha();
+        if (! $this->init_captcha())
+            return false;
         $captcha =& $this->captcha;
 		
 		$captcha->remove($prefix);
 	}
 
 	function cleanup_captcha_files() {
-        $this->init_captcha();
+        if (! $this->init_captcha())
+            return false;
         $captcha =& $this->captcha;
 
 		$tmp_dir = $captcha->tmp_dir;
@@ -1677,18 +1685,30 @@ var _wpcf7 = {
 	}
 
     function pipe($pipes, $value) {
-        if (is_string($value)) {
-            if (isset($pipes[$value]))
-                return $pipes[$value];
-            else
-                return $value;
-        } elseif (is_array($value)) {
+        if (is_array($value)) {
             $results = array();
             foreach ($value as $k => $v) {
                 $results[$k] = $this->pipe($pipes, $v);
             }
             return $results;
         }
+
+        foreach ($pipes as $p) {
+            if ($p[0] == $value)
+                return $p[1];
+        }
+
+        return $value;
+    }
+
+    function get_pipe_ins($pipes) {
+        $ins = array();
+        foreach ($pipes as $pipe) {
+            $in = $pipe[0];
+            if (! in_array($in, $ins))
+                $ins[] = $in;
+        }
+        return $ins;
     }
 
     function get_pipes($values) {
@@ -1702,9 +1722,8 @@ var _wpcf7 = {
                 $before = substr($value, 0, $pipe_pos);
                 $after = substr($value, $pipe_pos + 1);
             }
-            
-            if (! isset($pipes[$before]))
-                $pipes[$before] = $after;
+
+            $pipes[] = array($before, $after);
         }
         
         return $pipes;
@@ -1733,9 +1752,56 @@ var _wpcf7 = {
         }
     }
 
-}
+    function captcha_tmp_dir() {
+        if (defined('WPCF7_CAPTCHA_TMP_DIR'))
+            return WPCF7_CAPTCHA_TMP_DIR;
+        else
+            return $this->upload_dir('dir') . '/wpcf7_captcha';
+    }
 
-require_once(dirname(__FILE__) . '/captcha/captcha.php');
+    function captcha_tmp_url() {
+        if (defined('WPCF7_CAPTCHA_TMP_URL'))
+            return WPCF7_CAPTCHA_TMP_URL;
+        else
+            return $this->upload_dir('url') . '/wpcf7_captcha';
+    }
+
+    function upload_tmp_dir() {
+        if (defined('WPCF7_UPLOADS_TMP_DIR'))
+            return WPCF7_UPLOADS_TMP_DIR;
+        else
+            return $this->upload_dir('dir') . '/wpcf7_uploads';
+    }
+
+    function upload_dir($type = false) {
+        $siteurl = get_option('siteurl');
+        $upload_path = trim(get_option('upload_path'));
+        if (empty($upload_path))
+            $dir = WP_CONTENT_DIR . '/uploads';
+        else
+            $dir = $upload_path;
+
+        $dir = path_join(ABSPATH, $dir);
+
+        if (! $url = get_option('upload_url_path')) {
+            if (empty($upload_path) || $upload_path == $dir)
+                $url = WP_CONTENT_URL . '/uploads';
+            else
+                $url = trailingslashit($siteurl) . $upload_path;
+        }
+
+        if (defined('UPLOADS')) {
+            $dir = ABSPATH . UPLOADS;
+            $url = trailingslashit($siteurl) . UPLOADS;
+        }
+
+        if ('dir' == $type)
+            return $dir;
+        if ('url' == $type)
+            return $url;
+        return array('dir' => $dir, 'url' => $url);
+    }
+}
 
 $wpcf7 = new tam_contact_form_seven();
 
