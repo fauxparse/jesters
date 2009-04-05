@@ -2,10 +2,10 @@
 /*
 Plugin Name: Stray Random Quotes
 Plugin URI: http://www.italyisfalling.com/stray-random-quotes/
-Description: Display and rotate random quotes and random words everywhere on your blog. Easy to custom and manage. Ajax enabled.
+Description: Display and rotate random quotes and words everywhere on your blog. Easy to custom and manage. Ajax enabled.
 Author: ico@italyisfalling.com
 Author URI:http://www.italyisfalling.com/lines-of-code/
-Version: 1.9.0
+Version: 1.9.2
 License: GPL compatible
 */
 
@@ -18,7 +18,7 @@ if (DIR == 'plugins') $dir = '';
 define("WP_STRAY_QUOTES_PATH", get_option("siteurl") . "/wp-content/plugins/" . DIR);
 
 // !!! remember to change this with every new version !!!
-define("WP_STRAY_VERSION", 190);
+define("WP_STRAY_VERSION", 192);
 
 //get ready for local
 $currentLocale = get_locale();
@@ -130,6 +130,26 @@ function stray_quotes_header(){
 		</script><?php
 	
 	}
+	
+	//header for the help page
+	if(strpos($_SERVER['REQUEST_URI'],'stray_help')) {
+		
+		?><script type="text/javascript">
+		function expand(thistag, tag) {
+		   styleObj=document.getElementById(thistag).style;
+		   if (styleObj.display=='none')
+		   {
+			styleObj.display='';
+			/*tag.innerHTML = "Click here to hide";*/
+		   }
+		   else {
+			styleObj.display='none';
+			/*tag.innerHTML = "Click here to show";*/
+		   }
+		}
+		</script><?php
+	}
+	
 }
 
 //upon activation
@@ -232,7 +252,7 @@ function quotes_activation() {
 		
 		$quotesoptions = array();
 		
-		//conversion of old pre-1.7 options AND/OR creating new options
+		//conversion of old pre-1.7 options AND/OR creation of new options
 		$var = 'stray_quotes_before_all';
 		$temp = get_option($var);
 		if (false === $temp) $quotesoptions[$var] =  '';
@@ -333,7 +353,7 @@ function quotes_activation() {
 		delete_option($varb);
 		
 		//more new entries
-		$quotesoptions['stray_if_no_author'] =  '<br/>source:&nbsp;';	
+		$quotesoptions['stray_if_no_author'] =  __('<br/>source:&nbsp;','stray-quotes');	
 		$quotesoptions['stray_quotes_uninstall'] = '';
 		$quotesoptions['stray_clear_form'] =  'Y';	
 		$quotesoptions['stray_quotes_order'] = 'quoteID';
@@ -341,7 +361,6 @@ function quotes_activation() {
 		$quotesoptions['stray_quotes_categories'] = 'all';
 		$quotesoptions['stray_quotes_sort'] = 'DESC';
 		$quotesoptions['stray_default_category'] =  'default';	
-		$quotesoptions['stray_quotes_version'] = WP_STRAY_VERSION; 
 		$quotesoptions['stray_before_loader'] = '<p align="left">';
 		$quotesoptions['stray_loader'] = '';
 		$quotesoptions['stray_after_loader'] = '</p>';
@@ -355,7 +374,7 @@ function quotes_activation() {
 		$quotesoptions['bloginfo_scode'] =  '';		
 		$quotesoptions['bookmarlet_source'] =  '';
 		$quotesoptions['bookmarklet_cat'] =  '';
-		$quotesoptions['stray_loading'] =  'loading...';
+		$quotesoptions['stray_loading'] =  __('loading...','stray-quotes');
 				
 		//the message
 		delete_option('stray_quotes_first_time');		

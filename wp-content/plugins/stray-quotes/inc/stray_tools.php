@@ -2,22 +2,25 @@
 	
 	if(!empty($_POST['do'])) {
 		
-		//function reset id numbers
-		if(isset($_POST['submit'])){
+		//function to change bookmarklet options
+		if(isset($_POST['boptions'])){
 		
-			global $wpdb;
-			$query1 = $wpdb->query("ALTER TABLE `".WP_STRAY_QUOTES_TABLE."` DROP `quoteID`");
-			$query2 = $wpdb->query("ALTER TABLE `".WP_STRAY_QUOTES_TABLE."` ADD COLUMN `quoteID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST");
-				
-			if ($query1 && $query2) { ?>
+			$quotesoptions = array();
+			$quotesoptions = get_option('stray_quotes_options');			
+			$quotesoptions['bookmarklet_cat'] = $_POST['categories'];	
+			$quotesoptions['bookmarlet_source'] = $_POST['websource'];	
+
+			$update_shortcodes = update_option('stray_quotes_options', $quotesoptions);			
+			
+			//feedback
+			if ($update_shortcodes) { ?>
                 <div id="message" class="updated fade below-h2"><p>
-                <?php echo str_replace("%s",get_option("siteurl").'/wp-admin/admin.php?page=stray_manage' ,__('<strong>Quote IDs have been reset.</strong> To review use the <a href="%s">Manage page</a>.','stray-quotes'));  ?></p></div><?php 
-			} else { ?>
-                <div id="message" class="error fade below-h2"><p>
-                <?php _e('<strong>Failure.</strong> It was not possible to reset the ID numbers.','stray-quotes');
-                ?></p></div><?php 
-			}			
-		} 
+                <?php _e('<strong>Bookmarklet options saved.</strong>','stray-quotes'); ?></p></div><?php
+			} else {
+				?><div id="message" class="error fade below-h2"><p>
+				<?php _e('<strong>Bookmarklet options not saved. Something went wrong!</strong>','stray-quotes'); ?></p></div><?php
+            }
+		}
 		
 		//function to enable shortcodes
 		else if(isset($_POST['enable'])){
@@ -46,26 +49,80 @@
 
 		} 
 		
-		//function to change bookmarklet options
-		else if(isset($_POST['boptions'])){
+		//function reset id numbers
+		else if(isset($_POST['submit'])){
 		
-			$quotesoptions = array();
-			$quotesoptions = get_option('stray_quotes_options');			
-			$quotesoptions['bookmarklet_cat'] = $_POST['categories'];	
-			$quotesoptions['bookmarlet_source'] = $_POST['websource'];	
-
-			$update_shortcodes = update_option('stray_quotes_options', $quotesoptions);			
-			
-			//feedback
-			if ($update_shortcodes) { ?>
+			global $wpdb;
+			$query1 = $wpdb->query("ALTER TABLE `".WP_STRAY_QUOTES_TABLE."` DROP `quoteID`");
+			$query2 = $wpdb->query("ALTER TABLE `".WP_STRAY_QUOTES_TABLE."` ADD COLUMN `quoteID` INT NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST");
+				
+			if ($query1 && $query2) { ?>
                 <div id="message" class="updated fade below-h2"><p>
-                <?php _e('<strong>Bookmarklet options saved.</strong>','stray-quotes'); ?></p></div><?php
+                <?php echo str_replace("%s",get_option("siteurl").'/wp-admin/admin.php?page=stray_manage' ,__('<strong>Quote IDs have been reset.</strong> To review use the <a href="%s">Manage page</a>.','stray-quotes'));  ?></p></div><?php 
+			} else { ?>
+                <div id="message" class="error fade below-h2"><p>
+                <?php _e('<strong>Failure.</strong> It was not possible to reset the ID numbers.','stray-quotes');
+                ?></p></div><?php 
+			}			
+		} 
+		
+		//function to reset the options
+		else if(isset($_POST['resetsettings'])){
+		
+			$quotesoptions = array(
+								   
+					'stray_quotes_before_all' =>  '',
+					'stray_quotes_before_quote' =>  '&#8220;',   
+					'stray_quotes_after_quote' =>  '&#8221;',   
+					'stray_quotes_before_author' =>  '<br/>by&nbsp;',		   
+					'stray_quotes_after_author'	 =>  '',
+					'stray_quotes_before_source' =>  '<em>&nbsp;',
+					'stray_quotes_after_source'	 =>  '</em>',		   
+					'stray_quotes_after_all' =>  '',
+					'stray_quotes_put_quotes_first' =>  'Y',
+					'stray_quotes_default_visible' =>  'Y',
+					'stray_quotes_linkto' =>  '',
+					'stray_quotes_sourcelinkto' =>  '',
+					'stray_quotes_sourcespaces' => '-',
+					'stray_quotes_authorspaces'=> '-',
+					'stray_if_no_author' =>  '<br/>source:&nbsp;',
+					'stray_quotes_uninstall' => '',
+					'stray_clear_form' =>  'Y',
+					'stray_quotes_order' => 'quoteID',
+					'stray_quotes_rows' => 10,
+					'stray_quotes_categories' => 'all',
+					'stray_quotes_sort' => 'DESC',
+					'stray_default_category' =>  'default',
+					'stray_quotes_version' => WP_STRAY_VERSION,
+					'stray_before_loader' => '<p align=>"left">',
+					'stray_loader' => '',
+					'stray_after_loader' => '</p>',
+					'stray_ajax' =>  '',
+					'comment_scode' =>  '',
+					'title_scode' =>  '',
+					'excerpt_scode' =>  '',
+					'widget_scode' =>  '',
+					'categories_scode' =>  '',
+					'tags_scode' =>  '',
+					'bloginfo_scode' =>  '',
+					'bookmarlet_source' =>  '',
+					'bookmarklet_cat' =>  '',
+					'stray_loading' =>  __('loading...', 'stray-quotes'),
+					'stray_quotes_first_time' => ''
+					
+			);
+			
+			$updateoptions = update_option('stray_quotes_options', $quotesoptions);		
+
+			//feedback
+			if ($updateoptions) { ?>
+                <div id="message" class="updated fade below-h2"><p>
+                <?php _e('<strong>The settings have been reset to factory defaults.</strong>','stray-quotes'); ?></p></div><?php
 			} else {
 				?><div id="message" class="error fade below-h2"><p>
-				<?php _e('<strong>Bookmarklet options not saved. Something went wrong!</strong>','stray-quotes'); ?></p></div><?php
+				<?php _e('<strong>Settings not reset. Something went wrong!</strong>','stray-quotes'); ?></p></div><?php
             }
 		}
-		
 	}
 	
 	//get the options
@@ -105,15 +162,8 @@
 	</p></form>
 	</blockquote>
 	
-	<?php //the index reset ?>
-    <p><h3><?php _e('Reset the index', 'stray-quotes'); ?></h3></p>
-    <blockquote><form name="frm_index" action="<?php echo ($_SERVER['REQUEST_URI']); ?>" method="post">
-    <p><?php _e('If you want to reset the numbering of your quotes, click on the button below.', 'stray-quotes'); ?>
-    <br/><span class="setting-description"><?php _e('Note that after this some (or all) IDs might not correspond to the same quotes.', 'stray-quotes'); ?></span></p>
-    <p class="submit">&nbsp;<input type="hidden" name="do" value="Update" /><input type="submit" name="submit" value="<?php _e('Reset index', 'stray-quotes'); ?>">	
-    </p>
-    </form></blockquote>
-
+	<?php if(!current_user_can('manage_options')){echo '</div>'; die('Access to other tools denied');} ?>
+    	
 	 <?php //the shortcodes ?>
 	<p><h3><?php _e('Add shortcodes everywhere', 'stray-quotes'); ?></h3></p>
 	<blockquote><form name="frm_scode" action="<?php echo ($_SERVER['REQUEST_URI']); ?>" method="post">
@@ -135,6 +185,26 @@
     <li><input type="checkbox" name="widget_scode" value="Y" <?php echo ($widget_scode_selected); ?> />
 	<?php _e('Enable shortcodes in <strong>text widgets</strong>', 'stray-quotes'); ?></li></ul>
     <p class="submit">&nbsp;<input type="hidden" name="do" value="Update" /><input type="submit" name="enable" value="<?php _e('Toggle shortcodes', 'stray-quotes'); ?>">	
+    </p>
+	</form></blockquote>
+    
+	<?php //the index reset ?>
+    <p><h3><?php _e('Reset the index', 'stray-quotes'); ?></h3></p>
+    <blockquote><form name="frm_index" action="<?php echo ($_SERVER['REQUEST_URI']); ?>" method="post">
+    <p><?php _e('If you want to reset the numbering of your quotes, click on the button below. If you are the cautious type, maybe you want to backup first.', 'stray-quotes'); ?>
+    <br/><span class="setting-description"><?php _e('Note that after this some (or all) IDs might not correspond to the same quotes.', 'stray-quotes'); ?></span></p>
+    <p class="submit">&nbsp;<input type="hidden" name="do" value="Update" /><input type="submit" name="submit" value="<?php _e('Reset index', 'stray-quotes'); ?>">	
+    </p>
+    </form></blockquote>
+
+	 <?php //reset options ?>
+	<p><h3><?php _e('Reset the Settings', 'stray-quotes'); ?></h3></p>
+	<blockquote><form name="frm_reset" action="<?php echo ($_SERVER['REQUEST_URI']); ?>" method="post">
+    <p><?php _e('If you want the defaults settings back, click on the button below.', 'stray-quotes'); ?>
+    <br/>	<span class="setting-description">
+    <?php _e('This will revert all the settings to factory defaults according to recent issues of the plugin. They might differ from what they were many versions ago.', 'stray-quotes'); ?></span></p>
+    
+    <p class="submit">&nbsp;<input type="hidden" name="do" value="Update" /><input type="submit" name="resetsettings" value="<?php _e('Reset Settings', 'stray-quotes'); ?>">	
     </p>
 	</form></blockquote>
         

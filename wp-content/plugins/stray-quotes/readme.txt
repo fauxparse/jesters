@@ -4,9 +4,9 @@ Donate link: http://www.italyisfalling.com/lines-of-code#donate
 Tags: quotes, random, widget, sidebar, AJAX, random quotes, random words, quotations, words
 Requires at least: 2.3
 Tested up to: 2.7.1
-Stable tag: 1.9.0
+Stable tag: 1.9.2
 
-Display and rotate random quotes and random words everywhere on your blog. Easy to custom and manage. Ajax enabled.
+Display and rotate random quotes and words everywhere on your blog. Easy to custom and manage. Ajax enabled.
 
 == Description ==
 
@@ -56,10 +56,12 @@ _Note when upgrading: If you are not automatically upgrading via Wordpress, alwa
 (as of version 1.9.0, these localizations need partial updating from the maintainers)
 
 _Note for translators: there is a lot to translate with this plugin, expecially on account of the help page. If you want to create a localized copy of Stray Random Quotes, consider skipping the help page and translate the rest. This will save you some time._
-_The best way to submit new translations, or updates to old ones, is to include a direct link to the localization files in a comment to [this post](http://www.italyisfalling.com/stray-random-quotes#comments). This way the files are made available to the users sooner, and without waiting for a new release._
+
+_Note that the best way to submit new translations, or updates to old ones, is to include a direct link to the localization files in a comment to [this post](http://www.italyisfalling.com/stray-random-quotes#comments). This way the files are made available to the users sooner, and without waiting for a new release._
 
 == Changelog ==
 
+* 1.9.2 Added: ability to reset the settings to factory defaults (in the Tools page). Changed: parts of the settings page. Also changed and expanded: the help page (much more readable now) (You must know at this point that there is NOT another wordpress plugin with such a exhaustive embedded help page). Fixed: the `[quote]` shortcode and the `stray_a_quote` template tag wouldn't work with PHP 4. Thanks to Kathryn and Nathan for poiting out this bug and testing the fix. Fixed: Nasty bug that caused the settings in the tools page (such as the bookmarklet options or the shortcode extensions) to be reset whenever the user updated the options in the settings page.
 * 1.9.0 Fixed: noticeable bug within the `[quote]` shortcode that prevented AJAX and the sequence of quotes to work. Thanks to marc for pointing this bug out. Fixed/changed: parts of the help page.
 * 1.8.9 Fixed a few bugs to version 1.8.8 that included the following: Added: the quotes can now rotate automatically after a given interval of seconds. Added: widgets and template tags can load more than one quote a time; Added: the loading message can now be customized in the settings page; Added: Croatian translation thanks to [Rajic](http://stepinac.karmel.hr); Changed: the help page has been rewritten in large part. Changed: the widget options; Changed: removed the title options in the settings page, that were useless. Fixed: the loading message does not cause the collapsing of the quote area anymore. Fixed: many minor bugs. This version rewrites most of the code of the core functions, merging a great deal of lines and hopefully making the plugin more efficient.
 * 1.8.6 Added: Chinese translation thanks to [WGMking](http://2say.hi.cn/); fixed: a rare bug caused by IIS-enabled servers (thanks to Tool).
