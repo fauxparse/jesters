@@ -545,12 +545,15 @@ blockquote.testimonial a {
   display: block;
   text-align: center;
   border-top: 1px solid white;
+  line-height: normal;
+  padding: 0.5ex 0px 0px;
 }
 
 #headshots .user .kind {
   font-weight: normal;
   font-size: 90%;
   border-top: none;
+  padding: 0px 0px 0.5ex;
 }
 
 .bio {
@@ -563,6 +566,7 @@ blockquote.testimonial a {
 
 .bio img.full-length {
   float: right;
+  margin-left: 16px;
 }
 
 .bio h1 {
@@ -574,6 +578,10 @@ blockquote.testimonial a {
   letter-spacing: -0.1em;
   padding-left: 8px;
   margin-bottom: 8px;
+}
+
+.bio p {
+  margin-right: 216px;
 }
 
 /* }}} */
