@@ -91,8 +91,10 @@
           old_section.find('.teaser').hide('blind');
         });
         //section.siblings('.active').removeClass('active').find('.teaser').hide('blind');
+        return false;
+      } else {
+        return true;
       }
-      return false;
     });
   });
 </script>
