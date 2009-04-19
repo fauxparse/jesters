@@ -7,7 +7,6 @@ function stray_quotes_options() {
 	
 	//check whether user can manage options
 	if(!current_user_can('manage_options'))die('Access Denied');	
-	$mode = trim($_GET['mode']);
 	
 	//decode and intercept
 	foreach($_POST as $key => $val) {
@@ -64,6 +63,7 @@ function stray_quotes_options() {
 		'stray_loader'=> $_POST['loader'],
 		'stray_after_loader'=> $_POST['after_loader'],
 		'stray_loading'=> $_POST['stray_loading'],
+		'stray_multiuser'=> $_POST['stray_multiuser'],
 		
 		'comment_scode'=> $existingoptions['comment_scode'],
 		'title_scode'=> $existingoptions['title_scode'],
@@ -130,11 +130,13 @@ function stray_quotes_options() {
 	$quoteloader = $quotesoptions['stray_loader'];
 	$afterloader = $quotesoptions['stray_after_loader'];
 	$loading = $quotesoptions['stray_loading'];
+	$multiuser = $quotesoptions['stray_multiuser'];
 	
 	if ( $putQuotesFirst == 'Y' ) $putQuotesFirst_selected = 'checked';	
 	if ( $defaultVisible == 'Y' ) $defaultVisible_selected = 'checked';	
 	if ( $clearform == 'Y' ) $clearform_selected = 'checked';	
 	if ( $strayajax == 'Y' )$strayajax_selected = 'checked';
+	if ( $multiuser == 'Y' )$multiuser_selected = 'checked';
 	
 	//javascript to disable ajax forms
 	?><script type="text/javascript">
@@ -165,7 +167,7 @@ function stray_quotes_options() {
     <div class="wrap"><h2><?php _e('Settings','stray-quotes') ?></h2>
 
     <p><h3 style="line-height:.1em"><?php _e('How the quotes look','stray-quotes') ?></h3>
-    <span class="setting-description"><?php _e('Default settings to change how the quotes appear in your blog. These settings apply to ALL quotes regardless category, widget etc.','stray-quotes') ?></span>
+    <span class="setting-description"><?php _e('Default settings to change how the quotes appear in your blog. These settings apply to ALL widgets, shortcodes or template tags, but they can be disabled from those if needed.','stray-quotes') ?></span>
     </p>
 	<table class="form-table"> 
 	
@@ -345,8 +347,26 @@ function stray_quotes_options() {
     <input type="submit" value="<?php _e('Update all Settings','stray-quotes') ?> &raquo;" />
     </div>
     <p>&nbsp;</p>
-    </div>
     
+    
+   <p>&nbsp;</p>
+   
+	<?php //Multiuser ?>
+    <p><h3 style="line-height:.1em"><?php _e('Multiuser settings','stray-quotes') ?></h3>
+    <span class="setting-description"><?php _e('Allow contributors to access a restricted version of Stray Random Quotes.','stray-quotes') ?></span>
+    </p>
+    <table class="form-table"> 
+    
+    <tr valign="top"><th scope="row"><?php _e('Enable multiuser capability','stray-quotes') ?></th>    
+        <td colspan="2"><input type="checkbox" name="stray_multiuser" value="Y" <?php echo ($multiuser_selected); ?> /><span class="setting-description"><?php _e(' If checked a contributor (non-administrator) to the blog will be enabled to: create new quotes, edit and manage his own, and access a limited version of the help page.','stray-quotes') ?></span></td></tr>
+      
+	</table>
+    <br/>
+	<div class="submit">
+    <input type="hidden" name="do" value="Update" />
+    <input type="submit" value="<?php _e('Update all Settings','stray-quotes') ?> &raquo;" />
+    </div>
+    </div>
     </form><?php
 	
 }

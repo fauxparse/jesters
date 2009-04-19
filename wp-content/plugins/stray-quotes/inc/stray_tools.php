@@ -1,5 +1,15 @@
 <?php function stray_tools(){
 	
+	global $current_user;
+	
+	//get the options
+	$quotesoptions = array();
+	$quotesoptions = get_option('stray_quotes_options');
+	
+	//security check
+	if( $quotesoptions['stray_multiuser'] == false && !current_user_can('manage_options') )
+		die('Access Denied');
+	
 	if(!empty($_POST['do'])) {
 		
 		//function to change bookmarklet options
@@ -23,7 +33,7 @@
 		}
 		
 		//function to enable shortcodes
-		else if(isset($_POST['enable'])){
+		else if( isset($_POST['enable']) &&  current_user_can('manage_options') ){
 			
 			$quotesoptions = array();
 			$quotesoptions = get_option('stray_quotes_options');			
@@ -50,7 +60,7 @@
 		} 
 		
 		//function reset id numbers
-		else if(isset($_POST['submit'])){
+		else if( isset($_POST['submit']) &&  current_user_can('manage_options') ){
 		
 			global $wpdb;
 			$query1 = $wpdb->query("ALTER TABLE `".WP_STRAY_QUOTES_TABLE."` DROP `quoteID`");
@@ -67,7 +77,7 @@
 		} 
 		
 		//function to reset the options
-		else if(isset($_POST['resetsettings'])){
+		else if( isset($_POST['resetsettings']) &&  current_user_can('manage_options') ){
 		
 			$quotesoptions = array(
 								   
@@ -125,9 +135,6 @@
 		}
 	}
 	
-	//get the options
-	$quotesoptions = array();
-	$quotesoptions = get_option('stray_quotes_options');
 	if ( $quotesoptions['comment_scode'] == 'Y' ) $comment_scode_selected =  'checked';	
 	if ( $quotesoptions['title_scode'] == 'Y' ) $title_scode_selected = 'checked';	
 	if ( $quotesoptions['excerpt_scode'] == 'Y' ) $excerpt_scode_selected  = 'checked';	
@@ -147,7 +154,7 @@
 	<p><?php _e('To create quotes on the fly, drag the link below to your bowser toolbar.', 'stray-quotes'); ?>
 	<br/><span class="setting-description"><?php _e('How to use: When you find some text in a web page that you want to turn into a quote, select the text and click on the link.', 'stray-quotes'); ?></span></p><p><strong><a href="<?php echo "javascript:if(navigator.userAgent.indexOf('Safari')%20>=%200){Q=getSelection();}else{Q=document.selection?document.selection.createRange().text:document.getSelection();}void(window.open('". get_option('siteurl'). "/wp-admin/admin.php?page=stray_new&action=bookmarklet&quote_quote='+encodeURIComponent(Q)+'&quote_source=<a%20href='+encodeURIComponent(location.href)+'>'+encodeURIComponent(document.title)+'</a>'));"; ?>"><?php _e('Quote this', 'stray-quotes'); ?></a></strong></p>
     
-    <form name="frm_bookmarklet" action="<?php echo ($_SERVER['REQUEST_URI']); ?>" method="post">
+    <?php if(current_user_can('manage_options')) { ?><form name="frm_bookmarklet" action="<?php echo ($_SERVER['REQUEST_URI']); ?>" method="post">
     <p><?php _e('Default category for bookmarklet quotes: ', 'stray-quotes'); ?><select name="categories" style="vertical-align:middle; width:14em;"> 
 	<?php $categorylist = make_categories(); 
     foreach($categorylist as $categoryo){ ?>
@@ -159,10 +166,10 @@
     <input type="checkbox" name="websource" value="Y" <?php echo ($websource_selected); ?> />&nbsp;<?php _e('If checked, will add a link to the web page as source for the quote.', 'stray-quotes'); ?><br/><span class="setting-description"><?php _e('Note: no matter how you change these options, the bookmarklet will stay the same', 'stray-quotes'); ?>.</span></p>	
     <p class="submit"><input type="hidden" name="do" value="Update" />
     <input type="submit" name="boptions" value="<?php _e('Apply bookmarklet options', 'stray-quotes'); ?>">	
-	</p></form>
-	</blockquote>
+	</p></form><?php } ?>
 	
-	<?php if(!current_user_can('manage_options')){echo '</div>'; die('Access to other tools denied');} ?>
+	<?php if(!current_user_can('manage_options'))die(''); ?>
+	</blockquote>
     	
 	 <?php //the shortcodes ?>
 	<p><h3><?php _e('Add shortcodes everywhere', 'stray-quotes'); ?></h3></p>

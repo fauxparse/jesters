@@ -8,7 +8,9 @@
     <div class="wrap" style="width:52%"><h2><?php _e('The help page','stray-quotes');?></h2>
     <span class="setting-description"><?php _e(' ~ where <strong>ico</strong> answers questions, as you click on them.','stray-quotes');?></span>
        
-        <?php // how do I display random quotes on this blog? ?>
+        <?php if(current_user_can('manage_options')) {
+		
+		// how do I display random quotes on this blog? ?>
         <h3 style="cursor:pointer" onclick="expand('text1', this);"><?php _e('So, how do I display a random quote on this blog?','stray-quotes');?></h3>
         <div id="text1" style="display:none;"><blockquote><p><!--<img src="<?php echo WP_STRAY_QUOTES_PATH . "/screenshot-7.png" ?>" style="border:1px solid #ccc" /><br/>--><?php echo str_replace("%s1",$widgetpage,__('Stray Random Quotes comes with <strong>Widgets</strong>. You can use all the widgets you want. Each widget has its own set of options. Just drag a "Quotes" widget to the sidebar on the <a href="%s1">widget page</a>, and change its settings accordingly.<br />Note: <em>Your template must be widget compatible.</em></p>','stray-quotes')); ?></p></blockquote></div>
      
@@ -18,7 +20,7 @@
         
         <p><strong><?php _e('To get one or more random quotes: ', 'stray-quotes');?>
         
-        <code>&lt;?php if (function_exists('stray_random_quote')) stray_random_quote('category1,category2',false,'another quote &amp;raquo;',false,1,0,'quoteID','ASC'); ?&gt;</code></strong><br/><br/>
+        <code>&lt;?php if (function_exists('stray_random_quote')) stray_random_quote('category1,category2',false,'another quote &amp;raquo;',false,1,0,'quoteID','ASC', false); ?&gt;</code></strong><br/><br/>
         
         <?php _e('Variables :', 'stray-quotes');?><br/>
         
@@ -40,11 +42,13 @@
         
         <li>8. <strong><code>ASC</code></strong> <?php _e('Sorts the quotes ascending "ASC" or descending "DESC". Default is "ASC".', 'stray-quotes');?></li>
         
+        <li>9. <strong><code>true/false</code></strong> <?php _e('Disables the aspect settings (how the quotes look) if "true". default is "false".', 'stray-quotes');?></li>
+        
         </ul></p>
         
         <p><strong><?php _e('To get a specific quote: ', 'stray-quotes');?>
         
-        <code>&lt;?php if (function_exists('stray_a_quote')) stray_a_quote(31,'Next quote &amp;raquo;',false); ?&gt;</code></strong><br/><br/>
+        <code>&lt;?php if (function_exists('stray_a_quote')) stray_a_quote(31,'Next quote &amp;raquo;',false, false); ?&gt;</code></strong><br/><br/>
         
         <?php _e('Variables :', 'stray-quotes');?><br/>
         
@@ -56,11 +60,20 @@
         
         <li>3. <strong><code>true/false</code></strong> <?php _e('Disables AJAX for the present template tag if "true". default is "false".', 'stray-quotes');?></li>
         
+        <li>4. <strong><code>true/false</code></strong> <?php _e('Disables the aspect settings (how the quotes look) if "true". default is "false".', 'stray-quotes');?></li>
+        
+        
         </ul></p><p><?php _e('Unlike widgets, template tags do not generate a title for the quote area. If you want specific titles for different tags, enter them directly in the template HTML, before the tag.' , 'stray-quotes'); ?>
         </p></blockquote></div>
         
-        <?php // What about posts and pages? ?>
+        <?php } ?>
+        
+        <?php // What about posts and pages? 
+		if(current_user_can('manage_options')) { ?>
         <h3 style="cursor:pointer" onclick="expand('text3', this);"><?php _e('What about posts and pages?','stray-quotes');?></h3>
+        <?php }  else { ?>
+        <h3 style="cursor:pointer" onclick="expand('text3', this);"><?php _e('How do I add quotes to posts and pages?','stray-quotes');?></h3>
+        <?php } ?>
         <div id="text3" style="display:none;"><blockquote><p>
         
         <?php _e('Posts and pages accept <strong>shortcodes</strong>. Wordpress shortcodes can have many variables, in no particular order.<br/> They go like this:', 'stray-quotes');?><code>[sample-shortcode-name variable=value anothervariable=anothervalue]</code><br/><br/>
@@ -77,7 +90,11 @@
         
         <li><strong><code>noajax=true</code></strong> <?php _e('Disables AJAX for the present shortcode if "true".', 'stray-quotes');?></li>
         
-        <li><strong><code>timer=5</code></strong> <?php _e('Reloads the quote automatically after the given interval (in seconds). Hides the linkphrase. ', 'stray-quotes');?></li></ul>
+        <li><strong><code>timer=5</code></strong> <?php _e('Reloads the quote automatically after the given interval (in seconds). Hides the linkphrase. ', 'stray-quotes');?></li>
+        
+        <li><strong><code>disableaspect=false</code></strong> <?php _e('Disable the aspect settings if "true". Default is "false"', 'stray-quotes');?></li>
+        
+        </ul>
         
         <br/><?php _e('All these settings are optional. If you don\'t indicate anything, a random quote from all the categories will be displayed, with ajax according to the general settings.<br/><br/>', 'stray-quotes');?></p>
         
@@ -101,7 +118,11 @@
         
         <li><strong><code>noajax=true</code></strong> <?php _e('Disables AJAX for the present shortcode if "true".', 'stray-quotes');?></li>
         
-        <li><strong><code>timer=5</code></strong> <?php _e('Reloads the quotes automatically after the given interval (in seconds). Hides the linkphrase. ', 'stray-quotes');?></li></ul>   
+        <li><strong><code>timer=5</code></strong> <?php _e('Reloads the quotes automatically after the given interval (in seconds). Hides the linkphrase. ', 'stray-quotes');?></li>
+
+        <li><strong><code>disableaspect=false</code></strong> <?php _e('Disable the aspect settings if "true". Default is "false"', 'stray-quotes');?></li>
+        
+        </ul>   
         
         <br/><?php _e('All these settings are optional. Without them, AJAX is disabled in the shortcode and the values you see in this example are used as defaults.', 'stray-quotes');?><br/><br/></p>
         
@@ -114,17 +135,23 @@
         
         <li><strong><code>noajax=true</code></strong> <?php _e('Disables AJAX for the present shortcode if "true". Default is true.', 'stray-quotes');?></li>
         
-        <li><strong><code>linkphrase=<?php _e('"another quote &amp;raquo;"', 'stray-quotes');?></code></strong> <?php _e('The phrase to dynamically load another quote (overrides the one in the settings). Without this value, clicking on the quote area will reload the quote.', 'stray-quotes');?></li></ul>
+        <li><strong><code>linkphrase=<?php _e('"another quote &amp;raquo;"', 'stray-quotes');?></code></strong> <?php _e('The phrase to dynamically load another quote (overrides the one in the settings). Without this value, clicking on the quote area will reload the quote.', 'stray-quotes');?></li>
+                
+        <li><strong><code>disableaspect=false</code></strong> <?php _e('Disable the aspect settings if "true". Default is "false"', 'stray-quotes');?></li>
+        
+        </ul>
         
         </p></blockquote></div>
         
-        <?php // What about other areas of the blog, such as post titles, or even the blog title? ?>
+        <?php if(current_user_can('manage_options')) {
+			
+		// What about other areas of the blog, such as post titles, or even the blog title? ?>
         <h3 style="cursor:pointer" onclick="expand('text4', this);"><?php _e('What about other areas of the blog, such as post titles, or even the blog title?','stray-quotes');?></h3>
         <div id="text4" style="display:none;"><blockquote><p><?php echo str_replace("%s1",$toolspage,__('Well, actually, on the <a href="%s1">tools page</a> you can enable shortcodes for a number of extra areas where shortcodes aren\'t normally allowed. This will entitle you to some quite extraordinary things, such as random taglines or random category names. Cool examples can be found <a href="http://www.italyisfalling.com/cool-things-you-can-do-with-stray-random-quotes">here</a>.<br/><br/><strong><em>Please Note:</em></strong> it is <strong>highly recommended to disable AJAX</strong> for all these unconventional uses. This take it easy on your server, plus AJAX adds a DIV tag around the quotes that would mess with your layout in most cases where the random word is inline with the text.<br/><br/> <strong><em>Please Note:</em></strong> This trick will apply to all shortcodes, not just those of Stray Random Quotes: so pay attention before you enable it for areas where the user has access, such as the comments.', 'stray-quotes'));?></p></blockquote></div>
         
-        <?php //How do I change the appearance of the quotes?  ?>
+        <?php //How do I change the appearance of the quotes? ?> 
         <h3 style="cursor:pointer" onclick="expand('text5', this);"><?php _e('How do I change the appearance of the quotes?','stray-quotes');?></h3>
-        <div id="text5" style="display:none;"><blockquote><p><?php echo str_replace("%s1",$options,__('To change how the quotes look, you can use the <a href="%s1">settings page</a>. Here you will be able to set what comes before and after every part of the quote area (source, author, the quote etc). With little HTML, all sorts of customizations are possible, such as assigning styles, set the alignment of text, specify font or font color, adding images, quotation marks and many other entities. Just remember to close all the tags you opened before a part.<br/><br/><em><strong>Please note:</strong></em> the aspect options in the settings page apply to <em>ALL</em> quotes, regardless of category, widget or shortcode or tag. If you need to apply styles or add elements only to quotes in a given widget or other areas, you\'ll have to insert those in the template HTML or directly in the quote, when adding it or editing it. Sorry about this limitation. I might find a reasonable way around it one day.', 'stray-quotes'));?></p></blockquote></div>
+        <div id="text5" style="display:none;"><blockquote><p><?php echo str_replace("%s1",$options,__('To change how the quotes look, you can use the <a href="%s1">settings page</a>. Here you will be able to set what comes before and after every part of the quote area (source, author, the quote etc). With little HTML, all sorts of customizations are possible, such as assigning styles, set the alignment of text, specify font or font color, adding images, quotation marks and many other entities. Just remember to close all the tags you opened before a part.<br/><br/><em><strong>Please note:</strong></em> the aspect options in the settings page normally apply to <em>ALL</em> quotes in every area of your blog, but they can be disabled within each widget, shortcode or template tag. When aspect settings are disabled, the only element added is a whitespace between the quote and the author or source.', 'stray-quotes'));?></p></blockquote></div>
                 
         <?php // The IDs of the quotes are getting ridiculously high ?>
         <h3 style="cursor:pointer" onclick="expand('text6', this);"><?php _e('The IDs of the quotes are getting ridiculously high. Can I do something about it?','stray-quotes');?></h3>
@@ -137,10 +164,12 @@
         <?php // upgrading ?>
         <h3 style="cursor:pointer" onclick="expand('text10', this);"><?php _e('I am about to upgrade and I am scared. Should I backup my quotes?','stray-quotes');?></h3>
         <div id="text10" style="display:none;"><blockquote><p><?php echo str_replace(array("%s1","%s2"),array('http://wordpress.org/extend/plugins/stray-quotes/other_notes/','http://www.italyisfalling.com/category/wordpress-things/feed/'),__('It is normally not necessary to backup the quotes before a upgrade. Usually when a new version of Stray Random Quotes is activated the database table that contains the quotes is untouched. Exceptionally it may be necessary to manipulate it, in which case a backup is probably advisable. To know when this rare case applies you can check the changelog on <a href="%s1">this page</a>, or, more simply, you can follow the <a href="%s2">plugins feed</a> on my blog.<br/>How to backup, you ask? There are exceptional plugins out there to do that.', 'stray-quotes')); ?></p></blockquote></div>
+        
+        <?php } ?>
     
-        <?php // Hey. There is a bug ?>
-        <h3 style="cursor:pointer" onclick="expand('text8', this);"><?php _e('Hey. There is a bug!','stray-quotes');?></h3>
-        <div id="text8" style="display:none;"><blockquote><p><?php echo str_replace("%s1","http://www.italyisfalling.com/stray-random-quotes/",__('I knew it... See, I am not a programmer or anything. There\'s always a bug. If you want to help me catch it, and for further help, please come and trash the comments <a href="%s1">on this post</a>. Thanks.', 'stray-quotes')); ?></p></blockquote></div>
+        <?php // Hey. Something isn\'t working! ?>
+        <h3 style="cursor:pointer" onclick="expand('text8', this);"><?php _e('Hey. Something isn\'t working!','stray-quotes');?></h3>
+        <div id="text8" style="display:none;"><blockquote><p><?php echo str_replace("%s1","http://www.italyisfalling.com/stray-random-quotes/",__('Well, that figures. See, I am not a professional developer... I work on this plugin on my free time. So there\'s always going to be a bug. If you want to help me catch it, and to get further help, you are welcome to trash the comments <a href="%s1">on this post</a>. Before you do, though, check if the problem you are experiencing isn\'t caused by a conflicting plugin or some other issue of which Stray Random Quotes itself might not be responsible. Thanks.', 'stray-quotes')); ?></p></blockquote></div>
         
         <?php // DONATION ?>
         <h3 style="cursor:pointer" onclick="expand('text9', this);"><?php _e('Anything I can do to help?','stray-quotes');?></h3>

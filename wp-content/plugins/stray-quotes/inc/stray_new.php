@@ -2,7 +2,15 @@
 
 function stray_new() {	
 
-	global $wpdb;
+	global $wpdb,$current_user;
+	
+	//load options
+	$quotesoptions = array();
+	$quotesoptions = get_option('stray_quotes_options');
+	
+	//security check
+	if( $quotesoptions['stray_multiuser'] == false && !current_user_can('manage_options') )
+		die('Access Denied');
 
 	//decode and intercept
 	foreach($_POST as $key => $val) {
@@ -58,7 +66,9 @@ function stray_new() {
 		. "', `author`='" . mysql_real_escape_string($author)
 		. "', `source`='" . mysql_real_escape_string($source)
 		. "', `category`='" . mysql_real_escape_string($category)
-		. "', `visible`='" . mysql_real_escape_string($visible) . "'";	     
+		. "', `visible`='" . mysql_real_escape_string($visible) 
+		. "', `user`='" . mysql_real_escape_string($current_user->user_nicename)
+		. "'";	     
 		$wpdb->get_results($sql);
 		
 		//check: go and get the quote just inserted
@@ -67,7 +77,9 @@ function stray_new() {
 		. "' and `author`='" . mysql_real_escape_string($author) 
 		. "' and `source`='" . mysql_real_escape_string($source) 
 		. "' and `category`='" . mysql_real_escape_string($category) 
-		. "' and `visible`='" . mysql_real_escape_string($visible) . "' limit 1";
+		. "' and `visible`='" . mysql_real_escape_string($visible) 
+		. "' and `user`='" . mysql_real_escape_string($current_user->user_nicename)
+		. "' limit 1";
 		$result = $wpdb->get_results($sql2);
 		
 		//failure message
@@ -111,10 +123,6 @@ function stray_new() {
 				$data = $data[0];
 			}	
 		}
-		
-		//load options
-		$quotesoptions = array();
-		$quotesoptions = get_option('stray_quotes_options');
 
 		//optionally assign the just inserted quote to vaiables
 		if ($quotesoptions['stray_clear_form']!=='Y') {
@@ -157,7 +165,7 @@ function stray_new() {
 		$styletextarea = 'style="border:1px solid #ccc; font-family: Times New Roman, Times, serif; font-size: 1.4em;"'; ?>
 		
 		<div style="width:42em">
-		<script src="<?php echo WP_STRAY_QUOTES_PATH ?>/inc/js_quicktags-mini.js" type="text/javascript"></script>
+		<script src="<?php echo WP_STRAY_QUOTES_PATH ?>/inc/stray_quicktags.js" type="text/javascript"></script>
 		<form name="quoteform" id="quoteform" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 			<input type="hidden" name="action" value="add">
 			<input type="hidden" name="quoteID" value="<?php echo $quoteID; ?>">
@@ -181,7 +189,7 @@ function stray_new() {
 			
 			<p><label><?php _e('Category:&nbsp;','stray-quotes') ?></label>				
 			<select name="categories" style="vertical-align:middle; width:14em;" > 
-			<?php $categorylist = make_categories(); 
+			<?php $categorylist = make_categories($current_user->user_nicename); 
 			foreach($categorylist as $categoryo){ ?>
 			<option value="<?php echo $categoryo; ?>" style=" padding-right:5px" 
 			<?php if ($categoryo == $category || $categoryo == $defaultcategory) echo ' selected'; ?> >

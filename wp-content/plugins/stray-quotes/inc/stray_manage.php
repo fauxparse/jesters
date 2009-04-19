@@ -3,8 +3,14 @@
 //manage page
 function stray_manage() {
     	
-	global $wpdb;
+	global $wpdb,$current_user;
+	
+	//load options
 	$quotesoptions = get_option('stray_quotes_options');
+	
+	//security check
+	if( $quotesoptions['stray_multiuser'] == false && !current_user_can('manage_options') )
+		die('Access Denied');
 	
 	//decode and intercept
 	foreach($_POST as $key => $val)$_POST[$key] = stripslashes($val);
@@ -62,10 +68,8 @@ function stray_manage() {
 	$baseurl = querystrings($baseurl, 'qp', $pages);
 	$baseurl = querystrings($baseurl, 'qr', $rows);
 	$baseurl = querystrings($baseurl, 'qc', $categories);
-	$urlaction = querystrings($baseurl, 'qs', $sort);	
-	//the old way
-	/*$urlaction = $baseurl.'&amp;qo='.$orderby.'&amp;qp='.$pages.'&qr='.$rows.'&amp;qc='.$categories.'&amp;qs='.$sort;*/ 
-		
+	$urlaction = querystrings($baseurl, 'qs', $sort);
+	
 	//action: edit the quote
 	if ( $action == 'edit' ) {
 
@@ -121,7 +125,7 @@ function stray_manage() {
 			$styleborder = 'style="border:1px solid #ccc"';
 			$styletextarea = 'style="border:1px solid #ccc; font-family: Times New Roman, Times, serif; font-size: 1.4em;"'; ?>
             <div style="width:42em">
-			<script src="<?php echo WP_STRAY_QUOTES_PATH ?>/inc/js_quicktags-mini.js" type="text/javascript"></script>
+			<script src="<?php echo WP_STRAY_QUOTES_PATH ?>/inc/stray_quicktags.js" type="text/javascript"></script>
             <form name="quoteform" id="quoteform" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
 				<input type="hidden" name="qa" value="edit_save">
 				<input type="hidden" name="qi" value="<?php echo $quoteID; ?>">
@@ -144,9 +148,9 @@ function stray_manage() {
                 <script type="text/javascript">var edCanvas2 = document.getElementById('seditor');</script>
                 <p class="setting-description"><small><?php _e('* By adding a link to the author or the source, the default links specified on the settings page are ignored. Make sure the link is closed by a <code>&lt;/a&gt;</code> tag.','stray-quotes'); ?></small></p></p>
                 
-                <p><label><?php _e('Category:&nbsp;','stray-quotes') ?></label>                
+                <p><label><?php _e('Category:&nbsp;','stray-quotes'); ?></label>                
                 <select name="categories" style="vertical-align:middle; width:14em;"> 
-                <?php $categorylist = make_categories(); 
+                <?php $categorylist = make_categories($current_user->user_nicename); 
                 foreach($categorylist as $categoryo){ ?>
                 <option value="<?php echo $categoryo; ?>" style=" padding-right:5px"
                 <?php  if ( $categoryo == $category) echo ' selected'; ?> >
@@ -214,6 +218,7 @@ function stray_manage() {
 				. "', `source`='" . mysql_real_escape_string($source) 
 				. "', `category`='" . mysql_real_escape_string($category)
 				. "', `visible`='" . mysql_real_escape_string($visible) 
+				. "', `user`='" . mysql_real_escape_string($current_user->user_nicename)
 				. "' WHERE `quoteID`='" . mysql_real_escape_string($quoteID) . "'";		     
 				$wpdb->get_results($sql);
 				
@@ -223,7 +228,9 @@ function stray_manage() {
 				. "' AND `author`='" . mysql_real_escape_string($author) 
 				. "' AND `source`='" . mysql_real_escape_string($source) 
 				. "' AND `category`='" . mysql_real_escape_string($category) 
-				. "' AND `visible`='" . mysql_real_escape_string($visible) . "' LIMIT 1";
+				. "' AND `visible`='" . mysql_real_escape_string($visible) 
+				. "' AND `user`='" . mysql_real_escape_string($current_user->user_nicename)
+				. "' LIMIT 1";
 				$result = $wpdb->get_results($sql);
 				
 				//feedback
@@ -366,10 +373,20 @@ function stray_manage() {
 		 ?><div class="error fade"><?php _e('Please select something in the \'Bulk Actions\' menu first.','stray-quotes'); ?></div><?php 
 		}
 
-		// prepares category for sql
+		// prepares WHERE condition (categories/users)
 		$where = '';
-		if (!$categories || $categories == 'all') $where = '';
-		else $where = " WHERE `category`='" . $categories . "'";
+		if (!$categories || $categories == 'all') {
+			
+			if(!current_user_can('manage_options'))$where = " WHERE `user`='" . $current_user->user_nicename . "'";
+			else $where = '';
+			
+		} else {
+			
+			if(!current_user_can('manage_options'))$where = " WHERE `category`='" . $categories . "' AND `user`='" . $current_user->user_nicename . "'";
+			else $where = " WHERE `category`='" . $categories . "'";
+			
+		}
+			
 		
 		// how many rows we have in database
 		$numrows = $wpdb->get_var("SELECT COUNT(`quoteID`) as rows FROM " . WP_STRAY_QUOTES_TABLE . $where);
@@ -442,7 +459,7 @@ function stray_manage() {
 		}		
 	
 		//get all the quotes
-		$sql = "SELECT `quoteID`,`quote`,`author`,`source`,`category`,`visible` FROM " 
+		$sql = "SELECT `quoteID`,`quote`,`author`,`source`,`category`,`visible`, `user` FROM " 
 		. WP_STRAY_QUOTES_TABLE 
 		. $where
 		. " ORDER BY `". $orderby ."`"
@@ -459,21 +476,23 @@ function stray_manage() {
 		$bulkurl = remove_querystring_var($bulkurl, 'qi');
 		?><form name="bulkform" id="bulkform" method="post" action="<?php echo $bulkurl ?>">
         <div class="tablenav">
-        <div class="alignleft actions">      
+        <div class="alignleft actions" style="margin-right:10px">      
 		<select name="bulk" id="bulkselect" style="vertical-align:middle;max-width:110px" onchange="javascript:disable_enable()" />
-		<option value="noaction" >Bulk Actions</option>
-		<option value="multidelete">delete</option>
-		<option value="togglevisible">toggle visibility</option>
-		<option value="changecategory">change category	</option>
+		<option value="noaction" ><?php _e('Bulk Actions','stray-quotes'); ?></option>
+		<option value="multidelete"><?php _e('delete','stray-quotes'); ?></option>
+		<option value="togglevisible"><?php _e('toggle visibility','stray-quotes'); ?></option>
+		<option value="changecategory"><?php _e('change category','stray-quotes'); ?></option>
 		</select>
 		<select name="catselect" id="catselect" style="vertical-align:middle;max-width:120px"> 
-		<?php $categorylist = make_categories(); 
+		<?php 
+		if(current_user_can('manage_options'))$categorylist = make_categories();
+		else $categorylist = make_categories($current_user->user_nicename);
 		foreach($categorylist as $categoryo){ 
 			?><option value="<?php echo $categoryo; ?>" >
 			<?php echo $categoryo;?></option>
 		<?php } ?>   
 		</select>
-		<input type="submit" value="Apply" class="button-secondary action" />
+		<input type="submit" value="<?php _e('Apply','stray-quotes'); ?>" class="button-secondary action" />
 		</div>
         
         <div class="alignleft actions"> 
@@ -488,8 +507,9 @@ function stray_manage() {
 		</select> <!--<span style="color:#666; font-size:11px;white-space:nowrap;"><?php _e(' from ','stray-quotes'); ?> </span>-->
 		<select name="categories" onchange="switchpage(this)"  style="vertical-align:middle;max-width:120px"> 
 		<option value="<?php echo querystrings($urlaction, 'qc', 'all'); ?>" 
-		<?php  if ( $categories == '' || $categories == 'all' ) echo ' selected'; ?>>all categories</option>
-		<?php $categorylist = make_categories(); 
+		<?php  if ( $categories == '' || $categories == 'all' ) echo ' selected'; ?>><?php _e('all categories','stray-quotes'); ?></option>
+		<?php if(current_user_can('manage_options'))$categorylist = make_categories();
+		else $categorylist = make_categories($current_user->user_nicename);
 		foreach($categorylist as $categoryo){ 
 			if (preg_match('/\s+/',$categoryo)>0)$categoryo = preg_replace('/\s+/','-',$categoryo);
 			?><option value="<?php echo querystrings($urlaction, 'qc', $categoryo); ?>" <?php  if ( $categories) {if ( $categories == $categoryo) echo ' selected';} ?> ><?php echo $categoryo;?></option>
@@ -567,10 +587,22 @@ function stray_manage() {
 					<img src= <?php echo $imgdsc ?> alt="Ascending" title="Ascending" /></a> <?php } ?>
 				<?php }}else{ _e('Visible','stray-quotes'); }  ?>            
 				</th>
-				
+                
 				<th scope="col">&nbsp;</th>
 				<th scope="col">&nbsp;</th>
+
+				<?php if(current_user_can('manage_options') && $quotesoptions['stray_multiuser'] == true) { ?>
+                <th scope="col" style="white-space: nowrap;"> <?php if ($numrows != 1) { if ( $orderby != 'user') { ?>
+				<a href="<?php  echo querystrings($urlaction, 'qo', 'user'); ?>"><?php _e('User','stray-quotes') ?></a>
+				<?php } else { _e('User','stray-quotes');
+					if ($sort == 'ASC') { ?><a href="<?php echo querystrings($urlaction, 'qs', 'DESC'); ?>">
+					<img src= <?php echo $imgasc ?> alt="Descending" title="Descending" /></a> <?php }
+					else if ($sort == 'DESC') { ?><a href="<?php echo querystrings($urlaction, 'qs', 'ASC'); ?>">
+					<img src= <?php echo $imgdsc ?> alt="Ascending" title="Ascending" /></a> <?php } ?>
+				<?php }}else{ _e('User','stray-quotes'); }  ?>            
+				</th><?php } ?>
 				
+                
 			</tr></thead>
                 
             <?php //table rows ?>
@@ -580,7 +612,7 @@ function stray_manage() {
 			foreach ( $quotes as $quote ) {
 			
 				$alt = ($i % 2 == 0) ? ' class="alternate"' : ''; ?>		
-				<tr <?php echo($alt); ?>>
+				<tr <?php echo($alt); ?> <?php if( $quote->user != $current_user->user_nicename ) echo ' style="color:#aaa"' ?> >
                 				
 					<td scope="col" style="white-space: nowrap;"><input type="checkbox" name="<?php echo 'check_select'.$i ?>" value="<?php echo $quote->quoteID ?>" /> </td> 
 					
@@ -589,7 +621,7 @@ function stray_manage() {
 					<td><?php echo($quote->author); ?></td>
 					<td><?php echo($quote->source); ?></td>
 					<td><?php if ($quote->category == 'default')echo('<em>'.$quote->category.'</em>'); else echo $quote->category;?></td>
-					<td align="center"><?php if( $quote->visible == 'yes' ) _e( 'yes', 'stray-quotes' ); else _e( 'no', 'stray-quotes' ); ?></td>
+					<td><?php if( $quote->visible == 'yes' ) _e( 'yes', 'stray-quotes' ); else _e( 'no', 'stray-quotes' ); ?></td>
 										
 					<td align="center">
 					<a href="<?php echo querystrings( querystrings($urlaction, 'qa', 'edit'), 'qi', $quote->quoteID ); ?>">
@@ -599,6 +631,10 @@ function stray_manage() {
 					<a href="
 					<?php echo querystrings( querystrings($urlaction, 'qa', 'delete'), 'qi', $quote->quoteID );  ?>"
 					onclick="if ( confirm('<?php echo __( 'You are about to delete quote ','stray-quotes') . $quote->quoteID . '.\\n\\\'' . __('Cancel','stray-quotes') . '\\\' ' . __('to stop','stray-quotes') . ', \\\'OK\\\' ' . __('to delete','stray-quotes') . '.\''; ?>) ) { return true;}return false;"><?php echo __('Delete','stray-quotes') ?></a></td>			
+                    
+                    <?php if(current_user_can('manage_options') && $quotesoptions['stray_multiuser'] == true) { ?>
+					<td><?php if( $quote->user == $current_user->user_nicename )echo ''; else echo $quote->user; ?></td>
+                    <?php } ?>
                     
 				</tr>
 				<?php $i++; 
@@ -610,11 +646,10 @@ function stray_manage() {
 			<?php $search = array("%s1", "%s2");
             $replace = array($pages,$maxPage);		
             echo str_replace($search,$replace,__('<span class="displaying-num">Page %s1 of %s2</span>', 'stray-quotes')); 
-            echo '<strong>'.  $prev .$first . $nav . $last . $next . '</strong>'; ?></div>
+            echo '<strong>'.  $prev .$first . $nav . $last . $next . '</strong>'; ?>
             </div></div></form><?php
 			
 		} else { ?><p><div style="clear:both"> <?php echo str_replace("%s1",get_option('siteurl')."/wp-admin/admin.php?page=stray_manage",__('<br/>No quotes here. Maybe you want to <a href="%s1">reopen</a> this page.','stray-quotes')); ?> </div></p>
-	
 		</div><?php	}	
 	}
 

@@ -26,8 +26,8 @@ function stray_remove() {
 		/*else $quoteoptions['stray_quotes_uninstall'] = 'none';*/
 		update_option('stray_quotes_options', $quotesoptions);
 	
-		$deactivate_url = get_option("siteurl"). '/wp-admin/plugins.php?action=deactivate&amp;plugin='.DIR.'/stray_quotes.php';
-		if(function_exists('wp_nonce_url'))	$deactivate_url = urldecode(wp_nonce_url($deactivate_url, 'deactivate-plugin_'.DIR.'/stray_quotes.php'));	       
+		$deactivate_url = get_option("siteurl"). '/wp-admin/plugins.php?action=deactivate&amp;plugin='.STRAY_DIR.'/stray_quotes.php';
+		if(function_exists('wp_nonce_url'))	$deactivate_url = urldecode(wp_nonce_url($deactivate_url, 'deactivate-plugin_'.STRAY_DIR.'/stray_quotes.php'));	       
 
 		//execute and feedback the removal
 		$quotesoptions = get_option('stray_quotes_options');

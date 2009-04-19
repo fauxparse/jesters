@@ -1,7 +1,6 @@
 <?php
 
-// If your 'wp-content' directory is not in the default location you have to enter the path to your blog here.
-// It has nothing to do with your URL, we're talking about your server here. Example: '/home/www/public_html/wp'
+// If your 'wp-content' directory is not in the default location you have to enter the path to your blog here. Example: '/home/www/public_html/wp'
 $changedDir = ''; 
 
 if($_POST['action'] == 'newquote'){
@@ -18,8 +17,9 @@ if($_POST['action'] == 'newquote'){
 	$timer = isset($_POST['timer'])?$_POST['timer']:'';
 	$sort = isset($_POST['sort'])?$_POST['sort']:'';
 	$orderby = isset($_POST['orderby'])?$_POST['orderby']:'';
+	$disableaspect = isset($_POST['disableaspect'])?$_POST['disableaspect']:'';
 
-	echo get_stray_quotes($categories,$sequence,$linkphrase,$multi,$timer,false,$offset,$widgetid,false,$orderby,$sort,'');
+	echo get_stray_quotes($categories,$sequence,$linkphrase,$multi,$timer,false,$offset,$widgetid,false,$orderby,$sort,'',$disableaspect);
 }
 
 ?>

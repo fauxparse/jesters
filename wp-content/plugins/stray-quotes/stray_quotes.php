@@ -5,7 +5,7 @@ Plugin URI: http://www.italyisfalling.com/stray-random-quotes/
 Description: Display and rotate random quotes and words everywhere on your blog. Easy to custom and manage. Ajax enabled.
 Author: ico@italyisfalling.com
 Author URI:http://www.italyisfalling.com/lines-of-code/
-Version: 1.9.2
+Version: 1.9.5
 License: GPL compatible
 */
 
@@ -13,19 +13,22 @@ global $wpdb, $wp_version;
 
 //few definitions
 define("WP_STRAY_QUOTES_TABLE", $wpdb->prefix . "stray_quotes");
-define ("DIR",basename(dirname(__FILE__)));
-if (DIR == 'plugins') $dir = '';
-define("WP_STRAY_QUOTES_PATH", get_option("siteurl") . "/wp-content/plugins/" . DIR);
-
-// !!! remember to change this with every new version !!!
-define("WP_STRAY_VERSION", 192);
+define ("STRAY_DIR",basename(dirname(__FILE__)));
+if (STRAY_DIR == 'plugins') $dir = '';
+else $dir = STRAY_DIR . '/';
+define("WP_STRAY_QUOTES_PATH", get_option("siteurl") . "/wp-content/plugins/" . STRAY_DIR);
 
 //get ready for local
 $currentLocale = get_locale();
 if(!empty($currentLocale)) {
+	
+	//absolute path to mo file
 	$moFile = ABSPATH . 'wp-content/plugins/' . $dir . 'lang/stray-quotes-' . $currentLocale . ".mo";
-	//check if it is a window server and change path accordingly
-	/*if ( strpos($moFile, '\\')) $moFile = str_replace('/','\\',$moFile);*/ 
+	
+	//check if it is a window server and change path accordingly : will it work with ISS?
+	if ( strpos($moFile, '\\')) $moFile = str_replace('/','\\',$moFile);
+	
+	//load local
 	if(@file_exists($moFile) && is_readable($moFile)) load_textdomain('stray-quotes', $moFile);
 }
 
@@ -41,8 +44,11 @@ if ( !isset($_SERVER['REQUEST_URI']) || ($_SERVER['REQUEST_URI']=='') ) {
 
 //add ajax script
 function stray_quotes_add_js() {
+	
 	$quotesoptions = get_option('stray_quotes_options');
-	if ($quotesoptions['stray_ajax'] !='Y') wp_enqueue_script('stray_quotes_ajax_script', WP_STRAY_QUOTES_PATH.'/inc/js_ajax.js', array('jquery'));
+	if ($quotesoptions['stray_ajax'] !='Y') {
+		wp_enqueue_script('stray_ajax.js', WP_STRAY_QUOTES_PATH.'/inc/stray_ajax.js', array('jquery', 'jquery-form'));
+	}
 }
 
 //add header
@@ -92,7 +98,7 @@ function stray_quotes_header(){
 	}
 
 	//header for the settings page
-	if(strpos($_SERVER['REQUEST_URI'],'stray_quotes_options')) {
+	else if(strpos($_SERVER['REQUEST_URI'],'stray_quotes_options')) {
 	
 		?><script type="text/javascript">
 		function disable_enable(){
@@ -132,7 +138,7 @@ function stray_quotes_header(){
 	}
 	
 	//header for the help page
-	if(strpos($_SERVER['REQUEST_URI'],'stray_help')) {
+	else if(strpos($_SERVER['REQUEST_URI'],'stray_help')) {
 		
 		?><script type="text/javascript">
 		function expand(thistag, tag) {
@@ -155,11 +161,11 @@ function stray_quotes_header(){
 //upon activation
 function quotes_activation() {
 
-	global $wpdb;
+	global $wpdb,$current_user;
 	
 	//set the messages
 	$straymessage = "";
-	$newmessage = str_replace("%1","http://www.italyisfalling.com/stray-random-quotes/#changelog",__('<p>Hey. Welcome to a new version of <strong>Stray Random Quotes</strong>. All changes are addressed in the <a href="%1">changelog</a>, but you should know that: </p>','stray-quotes'));
+	$newmessage = str_replace("%1","http://www.italyisfalling.com/stray-random-quotes/#changelog",__('<p>You just installed a new version of <strong>Stray Random Quotes</strong>. All changes are addressed in the <a href="%1">changelog</a>, but you should know that: </p>','stray-quotes'));
 	
 	//in case we have to point to other pages in the messages
 	$widgetpage = get_option('siteurl')."/wp-admin/widgets.php";
@@ -181,17 +187,19 @@ function quotes_activation() {
 				$straytableExists = true;	
 				//if table exists it must be old -- must update and rename.
 				$wpdb->query('ALTER TABLE ' . $wp_quotes . ' ADD COLUMN `source` VARCHAR( 255 ) NOT NULL AFTER `author`');
-				$wpdb->query('ALTER TABLE ' . $wp_quotes . ' ADD COLUMN `category` VARCHAR( 255 ) NOT NULL  DEFAULT "default" AFTER `source`');			
+				$wpdb->query('ALTER TABLE ' . $wp_quotes . ' ADD COLUMN `category` VARCHAR( 255 ) NOT NULL  DEFAULT "default" AFTER `source`');
+				$wpdb->query('ALTER TABLE `' . $wp_quotes . '` ADD COLUMN `user` VARCHAR( 255 ) NOT NULL AFTER `visible`');
 				
 				//and fill in default values
-				$wpdb->query('UPDATE '. $wp_quotes . ' SET `category`="default"');				
+				$wpdb->query('UPDATE '. $wp_quotes . ' SET `category`="default"');
+				$wpdb->query("UPDATE `" . $wp_quotes . "` SET `user`= '".$current_user->user_nicename."'");
 				$wpdb->query('RENAME TABLE ' . $wp_quotes . ' TO ' . WP_STRAY_QUOTES_TABLE);
 				
 				//message
 				$search = array("%s1", "%s2");
 				$replace = array($wp_quotes, WP_STRAY_QUOTES_TABLE);
 				if (!$straymessage) $straymessage = $newmessage;
-				$straymessage .= str_replace($search,$replace,__('<li>* I changed the old table "%s1" into a new one called "%s2" but don\'t worry, all your quotes are still there.</li>','stray-quotes')); 
+				$straymessage .= str_replace($search,$replace,__('<li>I changed the old table "%s1" into a new one called "%s2" but don\'t worry, all your quotes are still there.</li>','stray-quotes')); 
 				
 				break;
 			}
@@ -206,14 +214,14 @@ function quotes_activation() {
 					//add new field
 					$wpdb->query('ALTER TABLE ' . WP_STRAY_QUOTES_TABLE . ' ADD COLUMN `category` VARCHAR( 255 ) NOT NULL DEFAULT "default" AFTER `source`');
 					
-					//and fill in default category values
+					//and fill in default values
 					$wpdb->query('UPDATE '. WP_STRAY_QUOTES_TABLE . ' SET `category`="default"');
 					
 					//message
 					$search = array("%s1", "%s2");
 					$replace = array(WP_STRAY_QUOTES_TABLE,  get_option('siteurl')."/wp-admin/admin.php?page=stray_manage");
 					if (!$straymessage) $straymessage = $newmessage;
-					$straymessage .= str_replace($search,$replace,__('<li>* This plugin now comes with "categories", which should make for a more intelligent way to organize, maintain and display quotes on your blog. I updated the table "%s1" but all your quotes <a href="%s2">are still there</a>.</li>','stray-quotes')); 
+					$straymessage .= str_replace($search,$replace,__('<li>This plugin now comes with "categories", which should make for a more intelligent way to organize, maintain and display quotes on your blog. I updated the table "%s1" but all your quotes <a href="%s2">are still there</a>.</li>','stray-quotes')); 
 	
 				}
 						
@@ -234,6 +242,7 @@ function quotes_activation() {
 		`source` varchar( 255 ) NOT NULL ,
 		`category` varchar( 255 ) NOT NULL  DEFAULT 'default',
 		`visible` ENUM( 'yes', 'no' ) NOT NULL DEFAULT 'yes',
+		`user` varchar( 255 ) NOT NULL ,
 		PRIMARY KEY ( `quoteID` ) )
 		");
 		
@@ -242,12 +251,12 @@ function quotes_activation() {
 		`quote`, `author`, `source`) values ('Always tell the truth. Then you don\'t have to remember anything.', 'Mark Twain', 'Roughin\' it') ");
 		
 		//message
-		$straymessage = __('Hey. This seems to be your first time with this plugin. I\'ve just created the database table "%s1" to store your quotes, and added one to start you off.','stray-quotes');
+		$straymessage = str_replace("%s1", WP_STRAY_QUOTES_TABLE,__('<p>Hey. This seems to be your first time with this plugin. I\'ve just created the database table "%s1" to store your quotes, and added one to start you off.</p>','stray-quotes'));
 	}
 	
 	$quotesoptions = get_option('stray_quotes_options');
 		
-	//convert old options into (or insert the) new array options	
+	//convert old options into (and insert the) new array options	
 	if (false === $quotesoptions || !is_array($quotesoptions) || $quotesoptions=='' ) {
 		
 		$quotesoptions = array();
@@ -375,11 +384,10 @@ function quotes_activation() {
 		$quotesoptions['bookmarlet_source'] =  '';
 		$quotesoptions['bookmarklet_cat'] =  '';
 		$quotesoptions['stray_loading'] =  __('loading...','stray-quotes');
+		$quotesoptions['stray_multiuser'] = false;
 				
 		//the message
 		delete_option('stray_quotes_first_time');		
-		if (!$straymessage) $straymessage = $newmessage;
-		$straymessage .=__('<li>* I converted your old settings into new ones that will take less room in your database and be faster to load.</li>','stray-quotes');
 		
 	}
 				
@@ -433,11 +441,11 @@ function quotes_activation() {
 		}
 		
 		//feedback the above
-		if ($needed == true)$straymessage .=__('<li>* hopefully the mess caused by version 1.7.8 has now been corrected... If you changed the categories assigned to quotes using the 1.7.8 version, you might find now that the changes made are lost. All the rest will stay the same, including that "groups" are now called "categories".</li>','stray-quotes');
+		if ($needed == true)$straymessage .=__('<li> hopefully the mess caused by version 1.7.8 has now been corrected... If you changed the categories assigned to quotes using the 1.7.8 version, you might find now that the changes made are lost. All the rest will stay the same, including that "groups" are now called "categories".</li>','stray-quotes');
 	
 		//if there are spaces in category (corrected in 1.7.6, might have slipped because of the mess of 1.7.8!)
 		$removal = $wpdb->query("UPDATE `".WP_STRAY_QUOTES_TABLE."` SET `category`= REPLACE(`category`, ' ', '-') WHERE `category` LIKE '% %'");
-		if ($removal)$straymessage .=__('<li>* spaces are not allowed within categories names, because they created all sorts of problems. I replaced them with dashes. I hope it\'s okay.</li>','stray-quotes');
+		if ($removal)$straymessage .=__('<li> spaces are not allowed within categories names, because they created all sorts of problems. I replaced them with dashes. I hope it\'s okay.</li>','stray-quotes');
 	
 		//options that have changed their names (operation missing in 1.7.8)
 		if ($quotesoptions['stray_quotes_groups'] !== false) {
@@ -489,15 +497,34 @@ function quotes_activation() {
 	if(  $quotesoptions['stray_quotes_version'] <= 186 ){
 		
 		//add a new fields
-		$quotesoptions['stray_loading'] =  'loading...';
+		$quotesoptions['stray_loading'] =  __('loading...','stray-quotes');
 		
 		//remove obsolete fields
 		unset($quotesoptions['stray_quotes_widget_title']);
 		unset($quotesoptions['stray_quotes_regular_title']);
 	}
+	
+	// <= 1.9.2
+	if(  $quotesoptions['stray_quotes_version'] <= 192 ){
+		
+		//alter table and set initial values
+		$checkuser = $wpdb->get_col('SELECT `user` FROM '.WP_STRAY_QUOTES_TABLE);
+		if ($checkuser == false){
+			$addgroup = $wpdb->query('ALTER TABLE `' . WP_STRAY_QUOTES_TABLE . '` ADD COLUMN `user` VARCHAR( 255 ) NOT NULL AFTER `visible`');
+			$setvalue = $wpdb->query("UPDATE `" . WP_STRAY_QUOTES_TABLE . "` SET `user`= '".$current_user->user_nicename."'");
+		}
+		
+		//message
+		if (!$straymessage)$straymessage = $newmessage;
+		if ($addgroup && $setvalue)$straymessage .= str_replace('%s1',get_option('siteurl')."/wp-admin/admin.php?page=stray_quotes_options",__('<li> Stray Random Quotes is now multiuser, which means that multiple contributors can have individual sets of quotes. Administrators are obviously enabled to manage, edit and delete everyone\'s quotes. All the other users will deal with their own. To enable multiuser capabilites, use the <a href="%s1">settings page</a>.</li>','stray-quotes'));
+																													
+		//add new field
+		$quotesoptions['stray_multiuser'] = false;
+	
+	}
 
-	//take care of version number
-	$quotesoptions['stray_quotes_version'] = WP_STRAY_VERSION; 
+	//!!!!!  CHANGE THIS EVERY NEW VERSION !!!!
+	$quotesoptions['stray_quotes_version'] = 195; 
 	
 	//reset the removal option for everyone
 	$quotesoptions['stray_quotes_uninstall'] = "";
@@ -548,15 +575,19 @@ include('inc/stray_remove.php');
 
 //build submenu entries
 function stray_quotes_add_pages() {
+	
+	$quotesoptions = get_option('stray_quotes_options');
+	if($quotesoptions['stray_multiuser'] == true) $straycan = 'edit_posts';
+	else $straycan = 'manage_options';
 
-	add_menu_page('Stray Random Quotes', __('Quotes','stray-quotes'), 8, __FILE__, 'stray_intro', WP_STRAY_QUOTES_PATH.'/img/lightbulb.png');
-	add_submenu_page(__FILE__, __('Overview for the Quotes','stray-quotes'), __('Overview','stray-quotes'), 8, __FILE__, 'stray_intro');
-	add_submenu_page(__FILE__, __('Manage Quotes','stray-quotes'), __('Manage','stray-quotes'), 8, 'stray_manage', 'stray_manage');
-	add_submenu_page(__FILE__, __('Add New Quote','stray-quotes'), __('Add New','stray-quotes'), 8, 'stray_new', 'stray_new');
-	add_submenu_page(__FILE__, __('Settings of the Quotes','stray-quotes'), __('Settings','stray-quotes'), 8, 'stray_quotes_options', 'stray_quotes_options'); 
-	add_submenu_page(__FILE__, __('Tools for your quotes','stray-quotes'), __('Tools','stray-quotes'), 8, 'stray_tools', 'stray_tools');
-	add_submenu_page(__FILE__, __('Help with the Quotes','stray-quotes'), __('Help','stray-quotes'), 8, 'stray_help', 'stray_help');
-	add_submenu_page(__FILE__, __('Remove Stray Random Quotes','stray-quotes'), __('Remove','stray-quotes'), 8, 'stray_remove', 'stray_remove'); 	
+	add_menu_page('Stray Random Quotes', __('Quotes','stray-quotes'), $straycan, __FILE__, 'stray_intro', WP_STRAY_QUOTES_PATH.'/img/lightbulb.png');
+	add_submenu_page(__FILE__, __('Overview for the Quotes','stray-quotes'), __('Overview','stray-quotes'), $straycan, __FILE__, 'stray_intro');
+	add_submenu_page(__FILE__, __('Manage Quotes','stray-quotes'), __('Manage','stray-quotes'), $straycan, 'stray_manage', 'stray_manage');
+	add_submenu_page(__FILE__, __('Add New Quote','stray-quotes'), __('Add New','stray-quotes'), $straycan, 'stray_new', 'stray_new');
+	add_submenu_page(__FILE__, __('Settings of the Quotes','stray-quotes'), __('Settings','stray-quotes'), 'manage_options', 'stray_quotes_options', 'stray_quotes_options'); 
+	add_submenu_page(__FILE__, __('Tools for your quotes','stray-quotes'), __('Tools','stray-quotes'), $straycan, 'stray_tools', 'stray_tools');
+	add_submenu_page(__FILE__, __('Help with the Quotes','stray-quotes'), __('Help','stray-quotes'), $straycan, 'stray_help', 'stray_help');
+	add_submenu_page(__FILE__, __('Remove Stray Random Quotes','stray-quotes'), __('Remove','stray-quotes'), 'manage_options', 'stray_remove', 'stray_remove'); 	
 	
 }
 
@@ -565,7 +596,7 @@ add_action('admin_menu', 'stray_quotes_add_pages');
 add_action('wp_print_scripts', 'stray_quotes_add_js');
 add_action('admin_head', 'stray_quotes_header');
 
-if ($wp_version >= 2.5) {
+if (function_exists(add_shortcode)) {
 	add_shortcode('quote', 'stray_id_shortcut');
 	add_shortcode('random-quote', 'stray_rnd_shortcut');
 	add_shortcode('all-quotes', 'stray_page_shortcut');

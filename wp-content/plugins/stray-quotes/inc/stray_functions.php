@@ -1,7 +1,7 @@
 <?php
 
 //MAIN FUNCTION. this RETURNS one or more random quotes.
-function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$multi=NULL,$timer=NULL,$noajax=NULL,$myoffset=0,$widgetid=NULL,$fullpage=NULL,$orderby='quoteID',$sort='ASC',$thisid=NULL) {
+function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$multi=NULL,$timer=NULL,$noajax=NULL,$myoffset=0,$widgetid=NULL,$fullpage=NULL,$orderby='quoteID',$sort='ASC',$thisid=NULL,$disableaspect=NULL) {
 
 	global $wpdb;
 
@@ -44,7 +44,7 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 	
 	//make sure certain values are not string or empty
 	if (is_string($sequence)) {
-		if ($sequence == 'false') {
+		if ($sequence == 'false' || $sequence == '') {
 			settype($sequence, "boolean");
 			$sequence = false;			
 		} else if ($sequence == 'true') {
@@ -52,8 +52,8 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 			$sequence = true;			
 		} 
 	}
-	if(is_string($multi)) settype($multi, "integer"); 
-	if($multi == 0 || $multi == '' || false === $multi)$multi = 1;
+	if(is_string($multi) || is_bool($multi)) settype($multi, "integer");
+	if($multi == 0 || $multi == '' || false == $multi)$multi = 1;
 	if(is_string($timer)) settype($timer, "integer");
 	if($timer == '' || false === $timer)$timer = 0;
 	if (is_string($noajax)) {
@@ -79,9 +79,21 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 			settype($fullpage, "boolean");
 			$fullpage = false;			
 		}
-	}
+	}	
 	if($orderby=='')$orderby='quoteID';
 	if($sort=='')$sort='ASC';
+	if (is_string($disableaspect)) {
+		if ($disableaspect == 'false' || $disableaspect == '' || $disableaspect == '0' ) {
+			settype($disableaspect, "boolean");
+			$disableaspect = false;			
+		} else if ($disableaspect == 'true' || $disableaspect == '1' ) {
+			settype($disableaspect, "boolean");
+			$disableaspect = true;			
+		} else {
+			settype($disableaspect, "boolean");
+			$disableaspect = false;			
+		}
+	}
 	
 	//sql for more than one quote
 	if ($multi > 1){
@@ -142,7 +154,7 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 			   $last = '&nbsp;'; // nor the last page link
 			}		
 			
-			$loader = '';//$first . $prev . $nav . $next . $last;
+			$loader = $first . $prev . $nav . $next . $last;
 			
 		} else {
 			
@@ -181,7 +193,7 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 			   $next = '&nbsp;'; // we're on the last page, don't print next link
 			}
 			
-			$loader = '';//$prev.$next;
+			$loader = $prev.$next;
 			
 		}
 		
@@ -194,8 +206,8 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 		}
 		
 		//retrieve the quotes
-		$sql = "SELECT `quoteID`,`quote`,`author`,`source`,`category` FROM `" 
-		. WP_STRAY_QUOTES_TABLE . "` WHERE visible='yes'" . $categoryquery 
+		$sql = "SELECT `quoteID`,`quote`,`author`,`source` FROM `" 
+		. WP_STRAY_QUOTES_TABLE . "` WHERE `visible`='yes'" . $categoryquery 
 		. " ORDER BY ". $orderby . $sort 
 		. " LIMIT " . $offset. ", ". $multi;
 		$offset = $myoffset+$multi;
@@ -210,8 +222,8 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 		
 		//sql the quotes
 		$offset=0;		
-		$sql = "SELECT `quoteID`,`quote`,`author`,`source`,`category` FROM `" 
-		. WP_STRAY_QUOTES_TABLE . "` WHERE visible='yes'" .$categoryquery
+		$sql = "SELECT `quoteID`,`quote`,`author`,`source` FROM `" 
+		. WP_STRAY_QUOTES_TABLE . "` WHERE `visible`='yes'" .$categoryquery
 		. " ORDER BY ". "`".$orderby."` " . $sort ;
 
 		$result = $wpdb->get_results($sql);
@@ -296,6 +308,7 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 			$offset.'\',\''.
 			$sequence.'\',\''.
 			$timer.'\',\''.
+			$disableaspect.'\',\''.
 			$loading.'\')';
 			
 			$event = 'onclick="'.$jaction.'"';
@@ -310,7 +323,7 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 			
 			$output .= $beforeAll.'<ul>';
 			foreach ( $result as $get_one )
-				$output .= '<li>'.stray_output_one($get_one,$multi).'</li>';	
+				$output .= '<li>'.stray_output_one($get_one,$multi,$disableaspect).'</li>';	
 			$output .= '</ul>'.$afterAll;
 			
 		} 
@@ -319,7 +332,7 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 		else {
 			
 			//if a specific quote
-			if ( $thisid && $thisid != '' )$output .= stray_output_one($specificresult,$multi);
+			if ( $thisid && $thisid != '' )$output .= stray_output_one($specificresult,$multi,$disableaspect);
 			
 			//if it is not a specific quote
 			else {
@@ -328,7 +341,7 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 				
 				//get the quote randomly
 				else $get_one = $result[mt_rand(0, $totalquotes)];
-				$output .= stray_output_one($get_one,$multi);
+				$output .= stray_output_one($get_one,$multi,$disableaspect);
 			}
 			
 		}
@@ -354,9 +367,9 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 		//AJAX disabled AND many quotes (output the pagination)
 		else if ($multi > 1) {
 			
-			$output .= $beforeloader;
-			$output .= $loader;
-			$output .= $afterloader;			
+      // $output .= $beforeloader;
+      // $output .= $loader;
+      // $output .= $afterloader;     
 		}
 		
 		return $output;
@@ -364,13 +377,13 @@ function get_stray_quotes($categories=NULL,$sequence=NULL,$linkphrase=NULL,$mult
 }
 
 //this is a TEMPLATE TAG. It ECHOES one or more random quotes.
-function stray_random_quote($categories='all',$sequence=false,$linkphrase='',$noajax=false,$multi=1,$timer=0,$orderby='quoteID',$sort='ASC') {
-	echo get_stray_quotes($categories,$sequence,$linkphrase,$multi,$timer,$noajax,0,'',false,$orderby,$sort,'');	
+function stray_random_quote($categories='all',$sequence=false,$linkphrase='',$noajax=false,$multi=1,$timer=0,$orderby='quoteID',$sort='ASC',$disableaspect=NULL) {
+	echo get_stray_quotes($categories,$sequence,$linkphrase,$multi,$timer,$noajax,0,'',false,$orderby,$sort,'',$disableaspect);	
 }
 
 //this is a TEMPLATE TAG. It ECHOES a specific quote.
-function stray_a_quote($id=1,$linkphrase='',$noajax=false) {
-	echo get_stray_quotes('',true,$linkphrase,'','',$noajax,'','','','','',$id);
+function stray_a_quote($id=1,$linkphrase='',$noajax=false,$disableaspect=NULL) {
+	echo get_stray_quotes('',true,$linkphrase,'','',$noajax,'','','','','',$id,$disableaspect);
 }
 
 //this is a SHORTCODE [random-quote]
@@ -386,9 +399,10 @@ function stray_rnd_shortcut($atts, $content=NULL) {
 	"timer" => '',
 	"offset" => 0,
 	"fullpage" => '',
+	"disableaspect" => false
 	), $atts));	
 	
-	return get_stray_quotes($categories,$sequence,$linkphrase,$multi,$timer,$noajax,$offset,$widgetid,$fullpage,'quoteID','ASC','');
+	return get_stray_quotes($categories,$sequence,$linkphrase,$multi,$timer,$noajax,$offset,$widgetid,$fullpage,'quoteID','ASC','',$disableaspect);
 }
 
 //this is a SHORTCODE [all-quotes]
@@ -405,10 +419,11 @@ function stray_page_shortcut($atts, $content=NULL) {
 	"offset" => 0,
 	"fullpage" => true,
 	"orderby" =>'quoteID',
-	"sort" => 'ASC'
+	"sort" => 'ASC',
+	"disableaspect" => false
 	), $atts));	
 	
-	return get_stray_quotes($categories,$sequence,$linkphrase,$rows,$timer,$noajax,$offset,$widgetid,$fullpage,$orderby,$sort,'');
+	return get_stray_quotes($categories,$sequence,$linkphrase,$rows,$timer,$noajax,$offset,$widgetid,$fullpage,$orderby,$sort,'',$disableaspect);
 }
 
 //this is a SHORTCODE [quote id=X]
@@ -417,39 +432,42 @@ function stray_id_shortcut($atts, $content=NULL) {
 	extract(shortcode_atts(array(
 	"id" => '1',
 	"linkphrase" => '',
-	"noajax" => true
+	"noajax" => true,
+	"disableaspect" => false
 	), $atts));	
 	
-	return get_stray_quotes('',true,$linkphrase,'','',$noajax,'','','','','',$id);
+	return get_stray_quotes('',true,$linkphrase,'','',$noajax,'','','','','',$id,$disableaspect);
 }
 
 //this FORMATS a given quote according to the settings
-function stray_output_one($get_one,$multi=NULL) {
+function stray_output_one($get_one,$multi=NULL,$disableaspect=NULL) {
 
 	//the variables
 	$quotesoptions = array();
 	$quotesoptions = get_option('stray_quotes_options');
-	if($multi == 1 || $multi == '' || $multi==false){
-		$beforeAll =  utf8_decode($quotesoptions['stray_quotes_before_all']);
-		$afterAll = utf8_decode($quotesoptions['stray_quotes_after_all']);
+	if(!$disableaspect || $disableaspect == '' || $disableaspect == false){
+		if($multi == 1 || $multi == '' || $multi==false){
+			$beforeAll =  utf8_decode($quotesoptions['stray_quotes_before_all']);
+			$afterAll = utf8_decode($quotesoptions['stray_quotes_after_all']);
+		}
+		$beforeQuote = utf8_decode($quotesoptions['stray_quotes_before_quote']);
+		$afterQuote = utf8_decode($quotesoptions['stray_quotes_after_quote']);
+		$beforeAuthor = utf8_decode($quotesoptions['stray_quotes_before_author']);
+		$afterAuthor = utf8_decode($quotesoptions['stray_quotes_after_author']);
+		$beforeSource = utf8_decode($quotesoptions['stray_quotes_before_source']);
+		$afterSource = utf8_decode($quotesoptions['stray_quotes_after_source']);
+		$linkto = utf8_decode($quotesoptions['stray_quotes_linkto']);
+		$sourcelinkto = utf8_decode($quotesoptions['stray_quotes_sourcelinkto']);
+		$sourcespaces = utf8_decode($quotesoptions['stray_quotes_sourcespaces']);	
+		$authorspaces = utf8_decode($quotesoptions['stray_quotes_authorspaces']);
+		$ifnoauthor = utf8_decode($quotesoptions['stray_if_no_author']);	
 	} else {
-		$beforeAll = '';
-		$afterAll = '';
+		$beforeAuthor = ' ';
+		$ifnoauthor = ' ';
+		$beforeSource = ' ';	
 	}
-	$beforeQuote = utf8_decode($quotesoptions['stray_quotes_before_quote']);
-	$afterQuote = utf8_decode($quotesoptions['stray_quotes_after_quote']);
-	$beforeAuthor = utf8_decode($quotesoptions['stray_quotes_before_author']);
-	$afterAuthor = utf8_decode($quotesoptions['stray_quotes_after_author']);
-	$beforeSource = utf8_decode($quotesoptions['stray_quotes_before_source']);
-	$afterSource = utf8_decode($quotesoptions['stray_quotes_after_source']);
-	$putQuotesFirst = utf8_decode($quotesoptions['stray_quotes_put_quotes_first']);
-	$defaultVisible = utf8_decode($quotesoptions['stray_quotes_default_visible']);
-	$linkto = utf8_decode($quotesoptions['stray_quotes_linkto']);
-	$sourcelinkto = utf8_decode($quotesoptions['stray_quotes_sourcelinkto']);
-	$sourcespaces = utf8_decode($quotesoptions['stray_quotes_sourcespaces']);	
-	$authorspaces = utf8_decode($quotesoptions['stray_quotes_authorspaces']);
-	$ifnoauthor = utf8_decode($quotesoptions['stray_if_no_author']);	
 	
+	$putQuotesFirst = utf8_decode($quotesoptions['stray_quotes_put_quotes_first']);
 	$output = '';	
 		
 	//make or not the author link
@@ -529,9 +547,17 @@ function stray_output_one($get_one,$multi=NULL) {
 }
 
 //this creates a LIST of unique CATEGORIES
-function make_categories() {
+function make_categories($user=NULL) {
 	global $wpdb;
-	$allcategories = $wpdb->get_col("SELECT `category` FROM " . WP_STRAY_QUOTES_TABLE);
+	
+	//get default category
+	$quotesoptions = array();
+	$quotesoptions = get_option('stray_quotes_options');
+	$defaultcategory = $quotesoptions['stray_default_category'];
+	
+	if($user)$where = "` WHERE `user`='".$user."'";
+	$allcategories = $wpdb->get_col("SELECT `category` FROM `" . WP_STRAY_QUOTES_TABLE . $where );
+	if ($allcategories == false)$allcategories = array($defaultcategory);
 	$uniquecategories = array_unique($allcategories);
 	return $uniquecategories;
 }
@@ -539,9 +565,9 @@ function make_categories() {
 //this finds the MOST USED VALUE in a column
 function mostused($field) {
 
-	global $wpdb;
+	global $wpdb,$current_user;
 
-	$sql = 'SELECT `'.$field.'` FROM ' . WP_STRAY_QUOTES_TABLE . ' WHERE `'.$field.'` IS NOT NULL AND `'.$field.'` !=""' ;
+	$sql = "SELECT `".$field."` FROM `" . WP_STRAY_QUOTES_TABLE . "` WHERE `".$field."` IS NOT NULL AND `".$field."` !='' AND `user`='".$current_user->user_nicename."'" ;
 	$all = $wpdb->get_col($sql);
 	$array = array_count_values($all);
 	
@@ -552,16 +578,16 @@ function mostused($field) {
 	
 	$min = $max = current($array);
 	$val = next($array);
-	$atleastthree = false;
+	$atleasttwo = false;
 	
 	while(NULL !== key($array)) {
 		if($val > $max)$max = $val;
 		elseif($val < $min)$min = $val;
-		if ($val > 3) $atleastthree = true;
+		if ($val > 1) $atleasttwo = true;
 		$val = next($array);
 		
 	}
-	if ($atleastthree == true) {
+	if ($atleasttwo == true) {
 		$keys = array_keys($array, $max);
 		$maxvalue = $keys[0];
 		return $maxvalue;	
