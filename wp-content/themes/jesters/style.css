@@ -459,6 +459,15 @@ h3 {
   padding: 8px 16px 8px 8px;
 }
 
+.pull-out {
+  text-align: right;
+}
+
+.pull-out img {
+  display: block;
+  margin: 0px 16px 0px auto;
+}
+
 /* }}} */
 
 /* }}} */
@@ -477,6 +486,8 @@ blockquote.testimonial p {
   font-style: italic;
   margin: 0px 0px 0.5ex;
 }
+
+q { font: 125% Baskerville, Georgia, serif; }
 
 blockquote.testimonial strong {
   color: #333;
