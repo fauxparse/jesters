@@ -4,7 +4,7 @@ Plugin Name: Contact Form 7
 Plugin URI: http://ideasilo.wordpress.com/2007/04/30/contact-form-7/
 Description: Just another contact form plugin. Simple but flexible.
 Author: Takayuki Miyoshi
-Version: 1.9.4
+Version: 1.9.5.1
 Author URI: http://ideasilo.wordpress.com/
 */
 
@@ -25,7 +25,7 @@ Author URI: http://ideasilo.wordpress.com/
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-define('WPCF7_VERSION', '1.9.4');
+define('WPCF7_VERSION', '1.9.5.1');
 
 if (! defined('WP_CONTENT_DIR'))
     define('WP_CONTENT_DIR', ABSPATH . 'wp-content');
@@ -87,6 +87,7 @@ class tam_contact_form_seven {
 		} elseif (! is_admin()) {
 			$this->process_nonajax_submitting();
 			$this->cleanup_captcha_files();
+			$this->cleanup_upload_files();
 		}
 	}
 	
@@ -188,19 +189,11 @@ class tam_contact_form_seven {
             
             if (! is_uploaded_file($file['tmp_name']))
                 continue;
-            
-            $filename = wp_unique_filename($uploads_dir, $file['name']);
-            $new_file = trailingslashit($uploads_dir) . $filename;
-            if (false === @move_uploaded_file($file['tmp_name'], $new_file)) {
-                $valid = false;
-                $reason[$name] = $this->message($contact_form, 'upload_failed');
-                continue;
-            }
 
-            $files[$name] = $new_file;
+            /* File type validation */
 
+            $pattern = '';
             if ($allowed_types_options = preg_grep('%^filetypes:%', $options)) {
-                $pattern = '';
                 foreach ($allowed_types_options as $allowed_types_option) {
                     if (preg_match('%^filetypes:(.+)$%', $allowed_types_option, $matches)) {
                         $file_types = explode('|', $matches[1]);
@@ -211,27 +204,53 @@ class tam_contact_form_seven {
                         }
                     }
                 }
-                $pattern = trim($pattern, '|');
-                $pattern = '(' . $pattern . ')';
-                $pattern = '/\.' . $pattern . '$/i';
-                if (! preg_match($pattern, $file['name'])) {
-                    $valid = false;
-                    $reason[$name] = $this->message($contact_form, 'upload_file_type_invalid');
-                    continue;
-                }
             }
-            
+
+            // Default file-type restriction
+            if ('' == $pattern)
+              $pattern = 'jpg|jpeg|png|gif|pdf|doc|docx|ppt|pptx|odt|avi|ogg|m4a|mov|mp3|mp4|mpg|wav|wmv';
+
+            $pattern = trim($pattern, '|');
+            $pattern = '(' . $pattern . ')';
+            $pattern = '/\.' . $pattern . '$/i';
+            if (! preg_match($pattern, $file['name'])) {
+                $valid = false;
+                $reason[$name] = $this->message($contact_form, 'upload_file_type_invalid');
+                continue;
+            }
+
+            /* File size validation */
+
+            $allowed_size = 1048576; // default size 1 MB
             if ($allowed_size_options = preg_grep('%^limit:%', $options)) {
                 $allowed_size_option = array_shift($allowed_size_options);
                 preg_match('/^limit:([1-9][0-9]*)$/', $allowed_size_option, $matches);
                 $allowed_size = (int) $matches[1];
-                
-                if ($file['size'] > $allowed_size) {
-                    $valid = false;
-                    $reason[$name] = $this->message($contact_form, 'upload_file_too_large');
-                    continue;
-                }
             }
+
+            if ($file['size'] > $allowed_size) {
+              $valid = false;
+              $reason[$name] = $this->message($contact_form, 'upload_file_too_large');
+              continue;
+            }
+
+            $filename = wp_unique_filename($uploads_dir, $file['name']);
+
+            // If you get script file, it's a danger. Make it TXT file.
+            if (preg_match('/\.(php|pl|py|rb|cgi)\d?$/', $filename))
+              $filename .= '.txt';
+
+            $new_file = trailingslashit($uploads_dir) . $filename;
+            if (false === @move_uploaded_file($file['tmp_name'], $new_file)) {
+                $valid = false;
+                $reason[$name] = $this->message($contact_form, 'upload_failed');
+                continue;
+            }
+
+            // Make sure the uploaded file is only readable for the owner process
+            chmod($new_file, 0400);
+
+            $files[$name] = $new_file;
         }
         
         $validation = compact('valid', 'reason');
@@ -427,6 +446,7 @@ class tam_contact_form_seven {
 	function update_contact_forms($contact_forms) {
 		$wpcf7 = get_option('wpcf7');
 		$wpcf7['contact_forms'] = $contact_forms;
+
 		update_option('wpcf7', $wpcf7);
 	}
     
@@ -904,7 +924,7 @@ var _wpcf7 = {
         $form_elements = $this->form_elements($cf['form'], false);
         $multipart = false;
         foreach ($form_elements as $form_element) {
-            if ('file' == $form_element['type']) {
+            if (preg_match('/^file[*]?$/', $form_element['type'])) {
                 $multipart = true;
                 break;
             }
@@ -1531,6 +1551,26 @@ var _wpcf7 = {
         wp_mkdir_p(trailingslashit($dir));
         @chmod($dir, 0733);
     }
+
+	function cleanup_upload_files() {
+        $dir = $this->upload_tmp_dir();
+        $dir = trailingslashit($dir);
+
+        if (! is_dir($dir))
+            return false;
+
+        if ($handle = opendir($dir)) {
+            while (false !== ($file = readdir($handle))) {
+                if ($file == "." || $file == "..")
+                    continue;
+
+				$stat = stat($dir . $file);
+				if ($stat['mtime'] + 60 < time()) // 60 secs
+					@ unlink($dir . $file);
+            }
+			closedir($handle);
+		}
+	}
     
     function init_captcha() {
         if (! class_exists('ReallySimpleCaptcha'))

@@ -253,7 +253,7 @@ h3 {
 /* What's On {{{ */
 
 #home #whats-on {
-  background: #333;
+  background: #333 url(images/whats-on.png) no-repeat 0px 0px;
   color: white;
 }
 
