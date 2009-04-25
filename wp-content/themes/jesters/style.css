@@ -93,7 +93,7 @@ h3 {
   position: absolute;
   right: 8px;
   bottom: 8px;
-  width: 600px;
+  width: 640px;
 }
 
 #home #navigator {
@@ -283,6 +283,7 @@ h3 {
   float: left;
   margin: 0px 8px 8px 0px;
   width: 76px;
+  position: relative;
 }
 
 #whats-on .posts .player a {
@@ -301,10 +302,19 @@ h3 {
   text-align: center;
 }
 
-#whats-on .posts .player .name strong {
+#whats-on .posts .player .name .role {
   color: #ed1c24;
   font-weight: normal;
-  font-size: 85%;
+  font-size: 75%;
+  background: black;
+  position: absolute;
+  left: 0px;
+  top: 96px;
+  width: 76px;
+  opacity: 0.85;
+  line-height: 1.5em;
+  height: 1.5em;
+  margin-top: -1.5em;
 }
 
 #whats-on .posts h3 {

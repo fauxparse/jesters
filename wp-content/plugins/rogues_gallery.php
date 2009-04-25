@@ -70,7 +70,7 @@ function player_portrait($atts, $content = null) {
 			$output .= "<img src=\"".$portrait_url."\" alt=\"{$user->display_name}\" />";
 			$output .= "<span class=\"name\">{$user->nickname}";
 			if ($role != 'player') {
-				$output .= " <strong>({$role})</strong>";
+				$output .= " <strong class=\"role\">{$role}</strong>";
 			}
 			$output .="</span></a></div>";
 			return $output;

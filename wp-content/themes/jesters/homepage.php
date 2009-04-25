@@ -37,8 +37,8 @@
 							echo " style=\"display: none;\"";
 						}
 						echo "><p>";
-						echo get_post_meta($page->ID, 'summary', true);
-						echo " <a class=\"more\" href=\"/{$page->post_name}\">Read more »</a></p></div></div><img src=\"/theme/images/splash-{$page->post_name}.png\" /></li>";
+						echo wptexturize(get_post_meta($page->ID, 'summary', true));
+						echo " <a class=\"more\" href=\"/{$page->post_name}\">Read&nbsp;more&nbsp;»</a></p></div></div><img src=\"/theme/images/splash-{$page->post_name}.png\" /></li>";
 						$i++;
 					}
 				}
