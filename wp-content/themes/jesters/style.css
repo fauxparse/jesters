@@ -59,6 +59,12 @@ h3 {
   overflow: hidden;
 }
 
+.highlight {
+  margin: 0px 0px 2ex -8px;
+  padding: 8px;
+  background: #ffc;
+}
+
 /*.container { background: url(/theme/blueprint/blueprint.png); }*/
 
 /* Homepage {{{ */
@@ -333,7 +339,7 @@ h3 {
 }
 
 #main-inner {
-  padding-top: 8px;
+  padding: 8px 0px 0px 0px;
 }
 
 /* Navigation {{{ */
@@ -476,6 +482,12 @@ h3 {
 .pull-out img {
   display: block;
   margin: 0px 16px 0px auto;
+}
+
+#sidebar img.size-full {
+  display: block;
+  text-align: right;
+  margin: 0px 0px 8px auto;
 }
 
 /* }}} */
