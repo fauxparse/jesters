@@ -65,6 +65,23 @@ h3 {
   background: #ffc;
 }
 
+#main ul {
+  margin: 0px 0px 2ex;
+}
+
+#main ul li {
+  display: block;
+  list-style: none;
+  margin: 0px 0px 1ex;
+  padding: 0px 0px 0px 20px;
+  background: url(images/bullet.png) no-repeat 4px 5px;
+}
+
+#main cite,
+#facebox cite {
+  text-transform: uppercase;
+}
+
 /*.container { background: url(/theme/blueprint/blueprint.png); }*/
 
 /* Homepage {{{ */
@@ -542,6 +559,7 @@ blockquote.testimonial a {
   list-style: none;
   margin: 0px 0px 2ex;
   padding: 0px;
+  background: none;
 }
 
 #testimonials blockquote.testimonial {
