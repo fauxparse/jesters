@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>The Court Jesters : Meet the Team</title>
+<link href="styles.css" rel="stylesheet" type="text/css" />
+<script type="text/JavaScript">
+<!--
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+//-->
+</script>
+</head>
+
+<body onload="MM_preloadImages('images/cate-patrick-kirsty-over.jpg','images/stephen-fraser-vanessa-over.jpg','images/jeff-michael-matt-over.jpg','images/daniel-emma-daniel-over.jpg','images/daniel-alice-kathleen-javier-over.jpg','images/hamish-alice-ralph-hamish-o.jpg','images/daniel-kathleen-javier-over.jpg')">
+<table border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0" width="200" height="420" title="Court Jesters - Christchurch">
+      <param name="movie" value="navigation.swf" />
+      <param name="quality" value="high" />
+      <embed src="navigation.swf" quality="high" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="200" height="420"></embed>
+    </object></td>
+    <td background="images/background.gif" bgcolor="#eeeeee"><div style="width: 550px; height:420px; min-height: 420px; overflow: auto" >
+      <div style="padding-left:50px; padding-right:10px;">
+        <h1>Meet the Team</h1>
+        <p>The Court Jesters are... </p>
+        <table width="450" border="0" cellpadding="0" cellspacing="0">
+          <tr>
+            <td align="right"><p><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image1','','images/cate-patrick-kirsty-over.jpg',1)"><img src="images/cate-patrick-kirsty.jpg" alt="Cate Smith, Patrick Duffy and Kirsty Gillespie" name="Image1" width="225" height="150" border="0" id="Gang 1" /></a></p></td>
+            <td><p><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image2','','images/stephen-fraser-vanessa-over.jpg',1)"><img src="images/stephen-fraser-vanessa.jpg" alt="Stephen Violich, Fraser Jackson and Vanessa Wells" name="Image2" width="225" height="150" border="0" id="Image2" /></a></p></td>
+          </tr>
+          <tr>
+            <td height="40" colspan="2" valign="middle">Cate Smith, Patrick Duffy, Kirsty Gillespie, Stephen Violich, Fraser Jackson, Vanessa Wells</td>
+          </tr>
+          <tr>
+            <td align="right" valign="top"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image3','','images/jeff-michael-matt-over.jpg',1)"><img src="images/jeff-michael-matt.jpg" alt="Jeff Clark, Michael Bell and Matt Powell" name="Image3" width="225" height="150" border="0" id="Image3" /></a></td>
+            <td valign="top"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image4','','images/daniel-emma-daniel-over.jpg',1)"><img src="images/daniel-emma-daniel.jpg" alt="Daniel Allan, Emma Brittenden and Daniel Pengelly" name="Image4" width="225" height="150" border="0" id="Image4" /></a></td>
+          </tr>
+          <tr>
+            <td height="40" colspan="2" valign="middle">Jeff Clark, Michael Bell, Matt Powell, Daniel Allan, Emma Brittenden and Daniel Pengelly</td>
+          </tr>
+          <tr>
+            <td align="right" valign="top"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image5','','images/daniel-kathleen-javier-over.jpg',1)"><img src="images/daniel-kathleen-javier.jpg" alt="Daniel Bain, Kathleen Burns and Javier Jarquin" name="Image5" width="225" height="150" border="0" id="Image5" /></a></td>
+            <td valign="top"><a href="#" onmouseout="MM_swapImgRestore()" onmouseover="MM_swapImage('Image6','','images/hamish-alice-ralph-hamish-o.jpg',1)"><img src="images/hamish-alice-ralph-hamish.jpg" alt="Hamish Parkinson, Alice Canton, Ralph McCubbin and Hamish Oliver" name="Image6" width="225" height="150" border="0" id="Image6" /></a></td>
+          </tr>
+          <tr>
+            <td height="40" colspan="2" valign="middle">Daniel Bain, Alice Canton, Javier Jarquin, Hamish Parkinson, Kathleen Burns, Ralph McCubbin and Hamish Oliver</td>
+          </tr>
+        </table>
+        <!--#include virtual="cmscontent/team.htm" -->
+      </div>
+    </div></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center" bgcolor="#333333"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td><h6><a href="utopia/cmsbasic">&copy;</a> The Court Jesters - <a href="mailto;jesters@courttheatre.org.nz">jesters@courttheatre.org.nz</a> tel 03 963 0870 PO Box 268, Christchurch, New Zealand</h6></td>
+        <td align="right"><h6><a href="http://www.newmediadesign.co.nz" target="_blank">Website: New Media Design</a> </h6></td>
+      </tr>
+
+    </table>    </td>
+  </tr>
+</table>
+</body>
+</html>

@@ -1,0 +1,30 @@
+These are example settings for the user_setup.php file. Note: these are examples only.
+For them to take effect you must put the appropriate line of code (under EXAMPLE CODE)
+in user_setup.php.
+
+PERMISSIONS | TYPE -> String | DEFAULT -> '0777'
+	If you don't like that SlideShowPro Director creates everything with 777 privileges,
+	add the following code to user_setup.php. (You can use any octal you want here,
+	but it has to have a leading 0 (e.g '0644', '0755', etc))
+	
+	EXAMPLE CODE:
+	$target_perms = '0755';
+	
+EXTERNALS | TYPE -> Boolean | DEFAULT -> true
+	Director checks external sources for information on new version available, as well
+	as the news panel of the dashboard. This can cause problems if the Director installation
+	is not connected to the internet. If you want Director not to load this external data,
+	add this to user_setup.php.
+	
+	EXAMPLE CODE:
+	$externals = false;
+	                       
+MAKE INTERNAL THUMBNAILS | TYPE -> Boolean | DEFAULT -> true
+	By default, Director creates a set of internal thumbnails to improve the responsiveness
+	of the interface. However, if you are uploading large images on servers with memory
+	limitations, this may cause Director to not complete the initial upload of images. Using
+	the following code in user_setup.php will tell Director not to create these internal
+	thumbnails.
+
+	EXAMPLE CODE:
+	$make_internals = false;

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gallery>
+<album id="fun" title="Nature" lgPath="gallery/fun/lg/" tnPath="gallery/fun/tn/" tn="http://slideshowpro.net/demo/gallery/nature/galleryThumb.jpg" description="Close-up imgs of plant life and insects.">
+<img src="2.jpg" caption="Gangsters" />
+<img src="3.jpg" caption="Maids" />
+<img src="4.jpg" caption="Disco" />
+<img src="5.jpg" caption="Jungle" />
+<img src="7.jpg" caption="Monsters" />
+<img src="8.jpg" caption="Jungle" />
+<img src="9.jpg" caption="Fabulous" />
+<img src="10.jpg" caption="Angels" />
+<img src="13.jpg" caption="Scard Scriptless" />
+<img src="14.jpg" caption="Audience" />
+<img src="15.jpg" caption="MCs" />
+
+</album>
+
+</gallery>
