@@ -289,6 +289,7 @@ h4 {
 #home #whats-on {
   background: #333 url(images/whats-on.png) no-repeat 0px 0px;
   color: white;
+  position: relative;
 }
 
 #home #whats-on h2 {
@@ -299,6 +300,11 @@ h4 {
   line-height: 0.6;
   text-indent: 8px;
   letter-spacing: -0.1em;
+}
+
+#home #whats-on h2,
+#home #whats-on h3 {
+  clear: left;
 }
 
 #whats-on .posts {
