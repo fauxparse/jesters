@@ -34,6 +34,7 @@ p {
 }
 
 h2 {
+  clear: left;
   margin: 0px 0px 0.5ex;
   padding: 0px;
   font-size: 250%;
@@ -51,6 +52,17 @@ h3 {
   color: #666;
   text-transform: lowercase;
   letter-spacing: -0.1em;
+}
+
+h2 strong, h3 strong {
+  color: black;
+}
+
+h4 {
+  color: #333;
+  font-weight: bold;
+  font-size: 100%;
+  margin: 0px;
 }
 
 .cleaner {
@@ -74,7 +86,7 @@ h3 {
   list-style: none;
   margin: 0px 0px 1ex;
   padding: 0px 0px 0px 20px;
-  background: url(images/bullet.png) no-repeat 4px 5px;
+  background: url(/theme/images/bullet.png) no-repeat 4px 5px;
 }
 
 #main cite,
@@ -433,8 +445,12 @@ h3 {
 .secondary li.current_page_parent a { color: white; background: none; }
 
 .tertiary {
-  height: 1.3em;
+  height: 2.5em;
   margin-top: 0.5em;
+}
+
+#main .tertiary li {
+  padding: 0px;
 }
 
 .tertiary li a {
