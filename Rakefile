@@ -29,6 +29,11 @@ namespace "db" do
       `gunzip < working/db/\`ls -rc working/db | head -1\` | mysql -u root -proot jesters`
     end
   end
+  
+  desc "push the local database to the live site"
+  task "publish" do
+    `mysqldump -u root -proot jesters | sed 's/jesters.local/www.courtjesters.co.nz/g' | mysql -h courtjesters.co.nz -u coesters_jesters -psp4c3jump coesters_jesters`
+  end
 end
 
 namespace "staging" do
