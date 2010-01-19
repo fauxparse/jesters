@@ -230,7 +230,7 @@ h4 {
   width: 20em;
   line-height: 1.0;
   font-size: 85%;
-  padding: 0.5ex 0px 0.5ex 12px;
+  padding: 0.5ex 0px 0.5ex 6px;
   border-left: 1px solid white;
   border-bottom: none;
   display: none;
@@ -241,7 +241,15 @@ h4 {
 }
 
 #home #navigator .secondary-links a {
-  color: #f68e92;
+/*  color: #f68e92;*/
+  color: white;
+  padding: 0px 6px;
+  cursor: pointer;
+}
+
+#home #navigator .secondary-links a:hover {
+  background: white;
+  color: #ed1c24;
 }
 
 #home #navigator .details {
